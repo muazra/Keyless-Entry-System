@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" type="text/css"
+      href="{{ url_for('static', filename='styles.css') }}">
+{% endblock %}
+
+
 {% block navbar %}
 <div class="navbar navbar-inverse" role="navigation">
     <div class="container">
@@ -15,6 +22,7 @@
                 <li><a href="{{url_for('userusers', username=username)}}">Users</a></li>
                 <li><a href="{{url_for('userguests', username=username)}}">Guests</a></li>
                 <li><a href="{{url_for('usersettings', username=username)}}">Settings</a></li>
+                <li><a href="/">Logout</a></li>
             </ul>
         </div>
     </div>

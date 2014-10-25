@@ -34,7 +34,7 @@ def login():
     if form.validate_on_submit():
         if mongodb.allow_login(form.username.data, form.password.data) is True:
             flash("Login successful. Welcome!")
-            return redirect(url_for('login'))
+            return redirect(url_for('userhome', username=form.username.data))
         else:
             flash("Wrong username/password")
             return redirect(url_for('login'))
@@ -61,6 +61,12 @@ def newuser():
         return redirect(url_for('login'))
 
     return render_template('newuser.html', form=form)
+
+
+@app.route('/<username>/home', methods=['GET', 'POST'])
+def userhome(username):
+    return render_template('userhome.html', username=username)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

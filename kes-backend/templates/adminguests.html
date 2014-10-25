@@ -1,0 +1,18 @@
+{% extends "baseadmin.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_content %}
+
+<div class="page-header">
+    <h1>Guests Panel</h1>
+</div>
+
+<div class="guests-list">
+    <h5 class="guests">Current List of Guests</h5>
+</div>
+
+<h3 class="add-guest">Add New Guest:</h3>
+
+{{ wtf.quick_form(form) }}
+
+{% endblock %}

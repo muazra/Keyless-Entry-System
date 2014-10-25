@@ -1,0 +1,20 @@
+{% extends "baseadmin.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_content %}
+
+<div class="page-header">
+    <h1>Users Panel</h1>
+</div>
+
+<div class="users-list">
+    <h5 class="users">Current List of Users</h5>
+</div>
+
+<h3 class="add-user">Add New User:</h3>
+
+<form action="{{url_for('adminusers', username=username)}}" method="POST" enctype="multipart/form-data">
+    {{ wtf.quick_form(form) }}
+</form>
+
+{% endblock %}

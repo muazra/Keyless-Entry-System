@@ -1,6 +1,6 @@
 __author__ = 'Muaz'
 
-from flask import Flask, render_template, session, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.wtf import Form
 from wtforms import StringField, SubmitField, PasswordField
@@ -32,10 +32,12 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        session['username'] = form.username.data
-        session['password'] = form.password.data
-
-        return redirect(url_for('login'))
+        if mongodb.allow_login(form.username.data, form.password.data) is True:
+            flash("Login successful. Welcome!")
+            return redirect(url_for('login'))
+        else:
+            flash("Wrong username/password")
+            return redirect(url_for('login'))
 
     return render_template('login.html', form=form)
 
@@ -45,20 +47,16 @@ def newuser():
     form = NewUserForm()
 
     if form.validate_on_submit():
-        session['name'] = form.name.data
-        session['username'] = form.username.data
-        session['password'] = form.password.data
-        session['deviceid'] = form.deviceid.data
-
-        if mongodb.device_exist(session['deviceid']) is False:
+        if mongodb.device_exist(form.deviceid.data) is False:
             flash("Device ID Not Found!")
             return redirect(url_for('newuser'))
 
-        if mongodb.user_exist(session['username']) is True:
+        if mongodb.username_exist(form.username.data) is True:
             flash("Username already exists. Please try again.")
             return redirect(url_for('newuser'))
 
-        mongodb.add_user(session['name'], session['username'], session['password'], session['deviceid'])
+        mongodb.add_user(form.name.data, form.username.data, form.password.data, form.deviceid.data)
+        mongodb.remove_device(form.deviceid.data)
         flash("Account Creation Successful. Please login below.")
         return redirect(url_for('login'))
 

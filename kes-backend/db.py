@@ -6,8 +6,10 @@ class MongoDB:
     db = client.db
 
     device_collection = db.device_collection
-    devices = {'device_id': 'abc123'}
-    device_collection.insert(devices)
+    device1 = {'device_id': "Device1ID"}
+    device2 = {'device_id': "Device2ID"}
+    device_collection.insert(device1)
+    device_collection.insert(device2)
 
     user_collection = db.user_collection
 
@@ -16,6 +18,9 @@ class MongoDB:
             return False
         return True
 
+    def remove_device(self, device_id):
+        self.device_collection.remove({'device_id': device_id})
+
     def add_user(self, name, username, password, deviceid):
         username = {'name': name,
                     'username': username,
@@ -23,10 +28,17 @@ class MongoDB:
                     'deviceid': deviceid}
         self.user_collection.insert(username)
 
-    def user_exist(self, username):
+    def username_exist(self, username):
         if self.user_collection.find_one({'username': username}) is None:
             return False
-        return True
+        else:
+            return True
+
+    def allow_login(self, username, password):
+        if self.user_collection.find_one({'username': username, 'password': password}) is None:
+            return False
+        else:
+            return True
 
     def __init__(self):
         return

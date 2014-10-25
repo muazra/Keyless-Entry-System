@@ -7,14 +7,14 @@
             <button type="button" class="navbar-toggle"
                     data-toggle="collapse" data-target=".navbar-collapse"><span class="sr-only">Toggle navigation</span>
             </button>
-            <a class="navbar-brand" href="/">KES</a>
+            <a class="navbar-brand" href="{{url_for('userhome', username=username)}}">KES</a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/">Home</a></li>
-                <li><a href="/">Users</a></li>
-                <li><a href="/">Guests</a></li>
-                <li><a href="/">Settings</a></li>
+                <li><a href="{{url_for('userhome', username=username)}}">Home</a></li>
+                <li><a href="{{url_for('userusers', username=username)}}">Users</a></li>
+                <li><a href="{{url_for('userguests', username=username)}}">Guests</a></li>
+                <li><a href="{{url_for('usersettings', username=username)}}">Settings</a></li>
             </ul>
         </div>
     </div>

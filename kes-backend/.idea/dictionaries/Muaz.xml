@@ -3,7 +3,10 @@
     <words>
       <w>deviceid</w>
       <w>newuser</w>
+      <w>userguests</w>
       <w>userhome</w>
+      <w>usersettings</w>
+      <w>userusers</w>
     </words>
   </dictionary>
 </component>

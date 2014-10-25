@@ -67,6 +67,17 @@ def newuser():
 def userhome(username):
     return render_template('userhome.html', username=username)
 
+@app.route('/<username>/users', methods=['GET', 'POST'])
+def userusers(username):
+    return render_template('userusers.html', username=username)
+
+@app.route('/<username>/guests', methods=['GET', 'POST'])
+def userguests(username):
+    return render_template('userguests.html', username=username)
+
+@app.route('/<username>/settings', methods=['GET', 'POST'])
+def usersettings(username):
+    return render_template('usersettings.html', username=username)
 
 if __name__ == '__main__':
     app.run(debug=True)

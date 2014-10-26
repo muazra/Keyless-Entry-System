@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">kes-android</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">KES</string>
+    <string name="kes">Keyless Entry System</string>
+    <string name="register"><u>Register</u></string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign in</string>
     <string name="action_settings">Settings</string>
 
 </resources>

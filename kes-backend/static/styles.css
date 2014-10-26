@@ -31,6 +31,26 @@
     text-align: center;
 }
 
+.door-current-status{
+    width: 50%;
+    padding: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 25px;
+    background-color: #C0C0C0;
+    text-align: center;
+}
+
+.door-current-power{
+    width: 50%;
+    padding: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 25px;
+    background-color: #C0C0C0;
+    text-align: center;
+}
+
 h5.home{
     padding: 5px;
     border: 1px solid #000;
@@ -96,7 +116,7 @@ h5.usermodel{
 
 /* General Styles */
 
-.photo-border {
+.photo-border{
     border: 1px groove #808080;
     margin-top: 25px;
     margin-bottom: 20px;
@@ -104,4 +124,9 @@ h5.usermodel{
 
 li{
     list-style-type: none;
+}
+
+.back{
+    text-decoration: underline;
+    text-align: center;
 }

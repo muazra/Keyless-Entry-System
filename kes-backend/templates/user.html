@@ -1,0 +1,20 @@
+{% extends "baseadmin.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_content %}
+
+<div class="page-header">
+    <h3>{{userprofile.get("name")}}</h3>
+</div>
+
+<h5 class="usermodel"><strong>Name</strong> - {{userprofile.get("name")}}</h5>
+<h5 class="usermodel"><strong>Username</strong> - {{userprofile.get("username")}}</h5>
+<h5 class="usermodel"><strong>Parent Admin</strong> - {{userprofile.get("parent_name")}}</h5>
+<h5 class="usermodel"><strong>Profile Type</strong> - User</h5>
+
+<div class="photo-border"></div>
+
+<h4>Current Photo:</h4><br>
+<img src="/static/{{userphoto}}" alt="User Picture" style="width:150px;height:150px">
+
+{% endblock %}

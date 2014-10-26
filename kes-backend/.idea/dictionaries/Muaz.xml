@@ -10,11 +10,17 @@
       <w>adminusers</w>
       <w>deviceid</w>
       <w>endfor</w>
+      <w>guestlink</w>
+      <w>guestphoto</w>
       <w>multipart</w>
       <w>newadmin</w>
       <w>newuser</w>
       <w>userguests</w>
       <w>userhome</w>
+      <w>userlink</w>
+      <w>usermodel</w>
+      <w>userphoto</w>
+      <w>userprofile</w>
       <w>usersettings</w>
       <w>userusers</w>
     </words>

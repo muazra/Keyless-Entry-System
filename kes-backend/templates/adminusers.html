@@ -10,7 +10,7 @@
 <div class="users-list">
     <h5 class="users">Current List of Users</h5>
     {% for user in users %}
-    <h5>{{user.get('name')}}</h5>
+    <li><a href="{{user.get('link')}}">{{user.get('name')}}</a></li>
     {% endfor %}
 </div>
 

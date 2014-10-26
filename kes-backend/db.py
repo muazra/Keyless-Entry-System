@@ -43,12 +43,14 @@ class MongoDB:
         else:
             return True
 
-    def add_user(self, parent, name, username, password, photo):
-        username = {'parent': parent,
+    def add_user(self, parent_username, parent_name, name, username, password, photo, userlink):
+        username = {'parent_username': parent_username,
+                    'parent_name': parent_name,
                     'name': name,
                     'username': username,
                     'password': password,
-                    'photo': photo}
+                    'photo': photo,
+                    'link': userlink}
         self.user_collection.insert(username)
 
     def user_exist(self, username):
@@ -57,10 +59,12 @@ class MongoDB:
         else:
             return True
 
-    def add_guest(self, parent, name, photo):
-        name = {'parent': parent,
+    def add_guest(self, parent_username, parent_name, name, photo, guestlink):
+        name = {'parent_username': parent_username,
+                'parent_name': parent_name,
                 'name': name,
-                'photo': photo}
+                'photo': photo,
+                'link': guestlink}
         self.guest_collection.insert(name)
 
     def guest_exist(self, name):

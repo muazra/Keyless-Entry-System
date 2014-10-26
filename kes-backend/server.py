@@ -53,7 +53,7 @@ def newadmin():
 @app.route('/<username>/users', methods=['GET', 'POST'])
 def adminusers(username):
     form = forms.NewUserForm()
-    users = mongodb.user_collection.find({'parent': username})
+    users = mongodb.user_collection.find({'parent_username': username})
 
     if form.validate_on_submit():
         if mongodb.user_exist(form.username.data) is True:
@@ -63,7 +63,10 @@ def adminusers(username):
         filename = secure_filename(form.photo.data.filename)
         form.photo.data.save('static/' + filename)
 
-        mongodb.add_user(username, form.name.data, form.username.data, form.password.data, filename)
+        parent_name = mongodb.admin_collection.find_one({'username': username}).get("name")
+        userlink = "/" + username + "/users" + "/" + form.username.data
+
+        mongodb.add_user(username, parent_name, form.name.data, form.username.data, form.password.data, filename, userlink)
         flash("User has successfully been added")
         return redirect(url_for('adminusers', username=username))
 
@@ -73,7 +76,7 @@ def adminusers(username):
 @app.route('/<username>/guests', methods=['GET', 'POST'])
 def adminguests(username):
     form = forms.NewGuestForm()
-    guests = mongodb.guest_collection.find({'parent': username})
+    guests = mongodb.guest_collection.find({'parent_username': username})
 
     if form.validate_on_submit():
         if mongodb.guest_exist(form.name.data) is True:
@@ -83,7 +86,10 @@ def adminguests(username):
         filename = secure_filename(form.photo.data.filename)
         form.photo.data.save('static/' + filename)
 
-        mongodb.add_guest(username, form.name.data, filename)
+        parent_name = mongodb.admin_collection.find_one({'username': username}).get("name")
+        guestlink = "/" + username + "/guests" + "/" + form.name.data
+
+        mongodb.add_guest(username, parent_name, form.name.data, filename, guestlink)
         flash("Guest has successfully been added")
         return redirect(url_for('adminguests', username=username))
 
@@ -101,6 +107,20 @@ def adminsettings(username):
 def adminhome(username):
     adminname = mongodb.admin_collection.find_one({'username': username}).get('name')
     return render_template('adminhome.html', username=username, adminname=adminname)
+
+
+@app.route('/<username>/users/<user>', methods=['GET', 'POST'])
+def usermodel(username, user):
+    userprofile = mongodb.user_collection.find_one({'username': user})
+    userphoto = userprofile.get('photo')
+    return render_template('user.html', username=username, userprofile=userprofile, userphoto=userphoto)
+
+
+@app.route('/<username>/guests/<guest>', methods=['GET', 'POST'])
+def guestmodel(username, guest):
+    guestprofile = mongodb.guest_collection.find_one({'name': guest})
+    guestphoto = guestprofile.get('photo')
+    return render_template('guest.html', username=username, guestprofile=guestprofile, guestphoto=guestphoto)
 
 if __name__ == '__main__':
     app.run(debug=True)

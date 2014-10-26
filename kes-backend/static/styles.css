@@ -18,6 +18,15 @@
 .guest-activity{
     width: 100%;
     height: 150px;
+    margin-bottom: 25px;
+    background-color: #C0C0C0;
+    text-align: center;
+}
+
+.door-activity{
+    width: 100%;
+    height: 150px;
+    margin-bottom: 25px;
     background-color: #C0C0C0;
     text-align: center;
 }
@@ -69,15 +78,30 @@ h3.add-guest{
 
 /* Settings Panel Styles */
 
-h5.settings{
+h5.settings {
     width: 100%;
     padding: 5px;
     background-color: #C0C0C0;
     text-align: left;
 }
 
-.settings-border{
+/* User Model Styles */
+
+h5.usermodel{
+    width: 100%;
+    padding: 5px;
+    background-color: #C0C0C0;
+    text-align: left;
+}
+
+/* General Styles */
+
+.photo-border {
     border: 1px groove #808080;
     margin-top: 25px;
     margin-bottom: 25px;
+}
+
+li{
+    list-style-type: none;
 }

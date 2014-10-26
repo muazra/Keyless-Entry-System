@@ -12,6 +12,7 @@ class MongoDB:
     device_collection.insert(device2)
 
     admin_collection = db.admin_collection
+    user_collection = db.user_collection
 
     def device_exist(self, device_id):
         if self.device_collection.find_one({'device_id': device_id}) is None:
@@ -28,14 +29,28 @@ class MongoDB:
                     'deviceid': deviceid}
         self.admin_collection.insert(username)
 
-    def username_exist(self, username):
+    def admin_exist(self, username):
         if self.admin_collection.find_one({'username': username}) is None:
             return False
         else:
             return True
 
-    def allow_login(self, username, password):
+    def admin_allow_login(self, username, password):
         if self.admin_collection.find_one({'username': username, 'password': password}) is None:
+            return False
+        else:
+            return True
+
+    def add_user(self, parent, name, username, password, photo):
+        username = {'parent': parent,
+                    'name': name,
+                    'username': username,
+                    'password': password,
+                    'photo': photo}
+        self.user_collection.insert(username)
+
+    def user_exist(self, username):
+        if self.user_collection.find_one({'username': username}) is None:
             return False
         else:
             return True

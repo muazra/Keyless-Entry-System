@@ -11,10 +11,13 @@
       <w>deviceid</w>
       <w>endfor</w>
       <w>guestlink</w>
+      <w>guestmodel</w>
       <w>guestphoto</w>
+      <w>guestprofile</w>
       <w>multipart</w>
       <w>newadmin</w>
       <w>newuser</w>
+      <w>photoform</w>
       <w>userguests</w>
       <w>userhome</w>
       <w>userlink</w>

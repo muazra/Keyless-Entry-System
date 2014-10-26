@@ -15,7 +15,11 @@
 
 <div class="photo-border"></div>
 
-<h4>Current Photo:</h4><br>
+<h4>Current Photo:</h4>
 <img src="/static/{{adminphoto}}" alt="Admin Picture" style="width:150px;height:150px">
+<br><br>
+<form action="{{url_for('adminsettings', username=username)}}" method="POST" enctype="multipart/form-data">
+    {{ wtf.quick_form(photoform) }}
+</form>
 
 {% endblock %}

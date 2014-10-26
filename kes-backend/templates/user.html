@@ -16,5 +16,8 @@
 
 <h4>Current Photo:</h4><br>
 <img src="/static/{{userphoto}}" alt="User Picture" style="width:150px;height:150px">
-
+<br><br>
+<form action="{{userprofile.get('link')}}" method="POST" enctype="multipart/form-data">
+    {{ wtf.quick_form(photoform) }}
+</form>
 {% endblock %}

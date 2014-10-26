@@ -5,6 +5,7 @@ from flask.ext.bootstrap import Bootstrap
 from werkzeug.utils import secure_filename
 from db import MongoDB
 import forms
+import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Project KES'
@@ -98,29 +99,59 @@ def adminguests(username):
 
 @app.route('/<username>/settings', methods=['GET', 'POST'])
 def adminsettings(username):
+    photoform = forms.PhotoForm()
+    if photoform.validate_on_submit():
+        original_filename = mongodb.admin_collection.find_one({'username': username}).get("photo")
+        os.remove("static/" + original_filename)
+
+        filename = secure_filename(photoform.photo.data.filename)
+        photoform.photo.data.save('static/' + filename)
+        mongodb.admin_collection.update({'username': username}, {'$set': {'photo': filename}})
+        return redirect(url_for('adminsettings', username=username))
+
     adminprofile = mongodb.admin_collection.find_one({'username': username})
     adminphoto = adminprofile.get("photo")
-    return render_template('adminsettings.html', username=username, adminprofile=adminprofile, adminphoto=adminphoto)
-
+    return render_template('adminsettings.html', photoform=photoform, username=username, adminprofile=adminprofile,
+                           adminphoto=adminphoto)
 
 @app.route('/<username>/home', methods=['GET', 'POST'])
 def adminhome(username):
     adminname = mongodb.admin_collection.find_one({'username': username}).get('name')
     return render_template('adminhome.html', username=username, adminname=adminname)
 
-
 @app.route('/<username>/users/<user>', methods=['GET', 'POST'])
 def usermodel(username, user):
+    photoform = forms.PhotoForm()
+    if photoform.validate_on_submit():
+        original_filename = mongodb.user_collection.find_one({'username': user}).get("photo")
+        os.remove("static/" + original_filename)
+
+        filename = secure_filename(photoform.photo.data.filename)
+        photoform.photo.data.save('static/' + filename)
+        mongodb.user_collection.update({'username': user}, {'$set': {'photo': filename}})
+        return redirect(url_for('usermodel', username=username, user=user))
+
     userprofile = mongodb.user_collection.find_one({'username': user})
     userphoto = userprofile.get('photo')
-    return render_template('user.html', username=username, userprofile=userprofile, userphoto=userphoto)
-
+    return render_template('user.html', photoform=photoform, username=username, userprofile=userprofile,
+                           userphoto=userphoto)
 
 @app.route('/<username>/guests/<guest>', methods=['GET', 'POST'])
 def guestmodel(username, guest):
+    photoform = forms.PhotoForm()
+    if photoform.validate_on_submit():
+        original_filename = mongodb.guest_collection.find_one({'name': guest}).get("photo")
+        os.remove("static/" + original_filename)
+
+        filename = secure_filename(photoform.photo.data.filename)
+        photoform.photo.data.save('static/' + filename)
+        mongodb.guest_collection.update({'name': guest}, {'$set': {'photo': filename}})
+        return redirect(url_for('guestmodel', username=username, guest=guest))
+
     guestprofile = mongodb.guest_collection.find_one({'name': guest})
     guestphoto = guestprofile.get('photo')
-    return render_template('guest.html', username=username, guestprofile=guestprofile, guestphoto=guestphoto)
+    return render_template('guest.html', photoform=photoform, username=username, guestprofile=guestprofile,
+                           guestphoto=guestphoto)
 
 if __name__ == '__main__':
     app.run(debug=True)

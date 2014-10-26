@@ -9,10 +9,15 @@
 
 <div class="guests-list">
     <h5 class="guests">Current List of Guests</h5>
+    {% for guest in guests %}
+    <h5>{{guest.get('name')}}</h5>
+    {% endfor %}
 </div>
 
 <h3 class="add-guest">Add New Guest:</h3>
 
-{{ wtf.quick_form(form) }}
+<form action="{{url_for('adminguests', username=username)}}" method="POST" enctype="multipart/form-data">
+    {{ wtf.quick_form(form) }}
+</form>
 
 {% endblock %}

@@ -68,3 +68,16 @@ h3.add-guest{
 }
 
 /* Settings Panel Styles */
+
+h5.settings{
+    width: 100%;
+    padding: 5px;
+    background-color: #C0C0C0;
+    text-align: left;
+}
+
+.settings-border{
+    border: 1px groove #808080;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}

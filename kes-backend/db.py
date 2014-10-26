@@ -13,6 +13,7 @@ class MongoDB:
 
     admin_collection = db.admin_collection
     user_collection = db.user_collection
+    guest_collection = db.guest_collection
 
     def device_exist(self, device_id):
         if self.device_collection.find_one({'device_id': device_id}) is None:
@@ -22,11 +23,12 @@ class MongoDB:
     def remove_device(self, device_id):
         self.device_collection.remove({'device_id': device_id})
 
-    def add_admin(self, name, username, password, deviceid):
+    def add_admin(self, name, username, password, deviceid, photo):
         username = {'name': name,
                     'username': username,
                     'password': password,
-                    'deviceid': deviceid}
+                    'deviceid': deviceid,
+                    'photo': photo}
         self.admin_collection.insert(username)
 
     def admin_exist(self, username):
@@ -51,6 +53,18 @@ class MongoDB:
 
     def user_exist(self, username):
         if self.user_collection.find_one({'username': username}) is None:
+            return False
+        else:
+            return True
+
+    def add_guest(self, parent, name, photo):
+        name = {'parent': parent,
+                'name': name,
+                'photo': photo}
+        self.guest_collection.insert(name)
+
+    def guest_exist(self, name):
+        if self.guest_collection.find_one({'name': name}) is None:
             return False
         else:
             return True

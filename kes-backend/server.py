@@ -1,6 +1,6 @@
 __author__ = 'Muaz'
 
-from flask import Flask, render_template, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash, request
 from flask.ext.bootstrap import Bootstrap
 from werkzeug.utils import secure_filename
 from db import MongoDB
@@ -15,6 +15,7 @@ mongodb = MongoDB()
 @app.route('/', methods=['GET', 'POST'])
 def login():
     form = forms.LoginForm()
+
     if form.validate_on_submit():
         if mongodb.admin_allow_login(form.username.data, form.password.data) is True:
             flash("Login successful. Welcome!")
@@ -28,6 +29,7 @@ def login():
 @app.route('/newadmin', methods=['GET', 'POST'])
 def newadmin():
     form = forms.NewAdminForm()
+
     if form.validate_on_submit():
         if mongodb.device_exist(form.deviceid.data) is False:
             flash("Device ID Not Found!")
@@ -37,10 +39,14 @@ def newadmin():
             flash("Username already exists. Please try again.")
             return redirect(url_for('newadmin'))
 
-        mongodb.add_admin(form.name.data, form.username.data, form.password.data, form.deviceid.data)
+        filename = secure_filename(form.photo.data.filename)
+        form.photo.data.save('static/' + filename)
+
+        mongodb.add_admin(form.name.data, form.username.data, form.password.data, form.deviceid.data, filename)
         mongodb.remove_device(form.deviceid.data)
         flash("Account Creation Successful. Please login below.")
         return redirect(url_for('login'))
+
     return render_template('newadmin.html', form=form)
 
 
@@ -50,12 +56,12 @@ def adminusers(username):
     users = mongodb.user_collection.find({'parent': username})
 
     if form.validate_on_submit():
-        if mongodb.admin_exist(form.username.data) is True:
+        if mongodb.user_exist(form.username.data) is True:
             flash("Username already exists. Please try again.")
             return redirect(url_for('adminusers', username=username))
 
         filename = secure_filename(form.photo.data.filename)
-        form.photo.data.save('images/' + filename)
+        form.photo.data.save('static/' + filename)
 
         mongodb.add_user(username, form.name.data, form.username.data, form.password.data, filename)
         flash("User has successfully been added")
@@ -67,24 +73,34 @@ def adminusers(username):
 @app.route('/<username>/guests', methods=['GET', 'POST'])
 def adminguests(username):
     form = forms.NewGuestForm()
+    guests = mongodb.guest_collection.find({'parent': username})
 
     if form.validate_on_submit():
+        if mongodb.guest_exist(form.name.data) is True:
+            flash("Guest already exists. Please try again.")
+            return redirect(url_for('adminguests', username=username))
+
         filename = secure_filename(form.photo.data.filename)
-        form.photo.data.save('images/' + filename)
+        form.photo.data.save('static/' + filename)
+
+        mongodb.add_guest(username, form.name.data, filename)
+        flash("Guest has successfully been added")
         return redirect(url_for('adminguests', username=username))
 
-    return render_template('adminguests.html', form=form, username=username)
+    return render_template('adminguests.html', form=form, username=username, guests=guests)
 
 
 @app.route('/<username>/settings', methods=['GET', 'POST'])
 def adminsettings(username):
-    return render_template('adminsettings.html', username=username)
+    adminprofile = mongodb.admin_collection.find_one({'username': username})
+    adminphoto = adminprofile.get("photo")
+    return render_template('adminsettings.html', username=username, adminprofile=adminprofile, adminphoto=adminphoto)
 
 
 @app.route('/<username>/home', methods=['GET', 'POST'])
 def adminhome(username):
-    return render_template('adminhome.html', username=username)
-
+    adminname = mongodb.admin_collection.find_one({'username': username}).get('name')
+    return render_template('adminhome.html', username=username, adminname=adminname)
 
 if __name__ == '__main__':
     app.run(debug=True)

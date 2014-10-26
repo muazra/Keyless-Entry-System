@@ -6,6 +6,8 @@
     <h1>Create New Account</h1>
 </div>
 
-{{ wtf.quick_form(form) }}
+<form action="/newadmin" method="POST" enctype="multipart/form-data">
+    {{ wtf.quick_form(form) }}
+</form>
 
 {% endblock %}

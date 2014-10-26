@@ -17,6 +17,10 @@ class NewAdminForm(Form):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     deviceid = StringField('Device ID', validators=[DataRequired()])
+    photo = FileField('Photo', validators=[
+        FileRequired(),
+        FileAllowed(['jpg', 'png'], 'Images only!')
+    ])
     submit = SubmitField('Submit')
 
 
@@ -33,8 +37,6 @@ class NewUserForm(Form):
 
 class NewGuestForm(Form):
     name = StringField('Name', validators=[DataRequired()])
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
     photo = FileField('Photo', validators=[
         FileRequired(),
         FileAllowed(['jpg', 'png'], 'Images only!')

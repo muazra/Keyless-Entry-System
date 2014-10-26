@@ -3,10 +3,14 @@
     <words>
       <w>adminguests</w>
       <w>adminhome</w>
+      <w>adminname</w>
+      <w>adminphoto</w>
+      <w>adminprofile</w>
       <w>adminsettings</w>
       <w>adminusers</w>
       <w>deviceid</w>
       <w>endfor</w>
+      <w>multipart</w>
       <w>newadmin</w>
       <w>newuser</w>
       <w>userguests</w>

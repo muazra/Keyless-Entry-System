@@ -5,27 +5,39 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DashActivity extends ListActivity {
+public class GuestsListActivity extends ListActivity {
+
+    private TextView mBannerTextView;
+    private Button mAddNewButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dash);
+        setContentView(R.layout.activity_list);
 
-        List<String> mDoorActivity = new ArrayList<String>();
+        mBannerTextView = (TextView) findViewById(R.id.banner);
+        mBannerTextView.setText("Currently Added Users");
 
-        ModelListAdapter adapter = new ModelListAdapter(this, mDoorActivity);
+        mAddNewButton = (Button) findViewById(R.id.add_new);
+        mAddNewButton.setText("Add New User");
+
+        List<String> mUsers = new ArrayList<String>();
+
+        ModelListAdapter adapter = new ModelListAdapter(this, mUsers);
         setListAdapter(adapter);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        getActionBar().setTitle("Dashboard");
+        getActionBar().setTitle("Guests");
         return true;
     }
 

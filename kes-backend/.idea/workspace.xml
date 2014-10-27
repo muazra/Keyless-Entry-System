@@ -2,12 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="86ca930a-fa9d-433f-ae1e-f5a195029a65" name="Default" comment="database initialize and integration &amp; user creation methods">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../kes-android/app/src/main/java/com/android/kes_android/RegisterActivity.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../kes-android/app/src/main/res/layout/activity_login.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../kes-android/app/src/main/res/layout/activity_register.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../kes-android/app/src/main/res/layout/activity_main.xml" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/../kes-android/app/src/main/java/com/android/kes_android/MainActivity.java" afterPath="$PROJECT_DIR$/../kes-android/app/src/main/java/com/android/kes_android/LoginActivity.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../kes-android/app/src/main/java/com/android/kes_android/GuestsListActivity.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../kes-android/app/src/main/java/com/android/kes_android/SettingsActivity.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../kes-android/app/src/main/java/com/android/kes_android/UsersListActivity.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../kes-android/app/src/main/res/drawable-xhdpi/ic_action_home.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../kes-android/app/src/main/res/layout/activity_list.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../kes-android/app/app.iml" afterPath="$PROJECT_DIR$/../kes-android/app/app.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../kes-android/app/build.gradle" afterPath="$PROJECT_DIR$/../kes-android/app/build.gradle" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../kes-android/app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/../kes-android/app/src/main/AndroidManifest.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../kes-android/app/src/main/java/com/android/kes_android/DashActivity.java" afterPath="$PROJECT_DIR$/../kes-android/app/src/main/java/com/android/kes_android/DashActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../kes-android/app/src/main/java/com/android/kes_android/LoginActivity.java" afterPath="$PROJECT_DIR$/../kes-android/app/src/main/java/com/android/kes_android/LoginActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../kes-android/app/src/main/java/com/android/kes_android/RegisterActivity.java" afterPath="$PROJECT_DIR$/../kes-android/app/src/main/java/com/android/kes_android/RegisterActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../kes-android/app/src/main/res/layout/activity_dash.xml" afterPath="$PROJECT_DIR$/../kes-android/app/src/main/res/layout/activity_dash.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../kes-android/app/src/main/res/menu/main.xml" afterPath="$PROJECT_DIR$/../kes-android/app/src/main/res/menu/main.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="kes-backend.iws" />
     <ignored path=".idea/workspace.xml" />

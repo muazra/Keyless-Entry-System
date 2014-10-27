@@ -1,8 +1,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity" >
+
+    <item android:id="@+id/action_home"
+          android:title="Home"
+          android:icon="@drawable/ic_action_home"
+          android:showAsAction="always"/>
+
+    <item android:id="@+id/action_users"
+          android:title="Users"
+          android:orderInCategory="100"
+          android:showAsAction="never"/>
+
+    <item android:id="@+id/action_guests"
+          android:title="Guests"
+          android:orderInCategory="200"
+          android:showAsAction="never"/>
+
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="300"
         android:showAsAction="never" />
+
 </menu>

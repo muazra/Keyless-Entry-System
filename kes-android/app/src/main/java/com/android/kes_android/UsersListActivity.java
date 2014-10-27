@@ -1,15 +1,17 @@
 package com.android.kes_android;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,7 @@ public class UsersListActivity extends ListActivity {
         mAddNewButton.setText("Add New User");
 
         List<String> mUsers = new ArrayList<String>();
+        mUsers.add("Jose Hernandez");
 
         ModelListAdapter adapter = new ModelListAdapter(this, mUsers);
         setListAdapter(adapter);
@@ -38,9 +41,23 @@ public class UsersListActivity extends ListActivity {
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), "User clicked", Toast.LENGTH_LONG).show();
+                profileDialog().show();
             }
         });
+    }
+
+    private AlertDialog.Builder profileDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_DARK);
+        LayoutInflater inflater = getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.dialog_profile, null));
+
+        builder.setTitle("USER DETAILS");
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                //do nothing
+            }
+        });
+        return builder;
     }
 
     @Override

@@ -18,24 +18,28 @@
         android:paddingBottom="15dp"/>
 
     <EditText
+        android:id="@+id/register_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Name"
         android:layout_gravity="center"/>
 
     <EditText
+        android:id="@+id/register_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/username"
         android:layout_gravity="center"/>
 
     <EditText
+        android:id="@+id/register_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/password"
         android:layout_gravity="center"/>
 
     <EditText
+        android:id="@+id/register_deviceID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Device ID"
@@ -48,12 +52,14 @@
         android:orientation="horizontal">
 
         <ProgressBar
+            android:id="@+id/register_progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="end"/>
 
         <Button
+            android:id="@+id/register_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"

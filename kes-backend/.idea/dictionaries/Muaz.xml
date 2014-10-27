@@ -10,6 +10,9 @@
       <w>adminusers</w>
       <w>deviceid</w>
       <w>endfor</w>
+      <w>getadmins</w>
+      <w>getguests</w>
+      <w>getusers</w>
       <w>guestlink</w>
       <w>guestmodel</w>
       <w>guestphoto</w>

@@ -1,9 +1,10 @@
 __author__ = 'Muaz'
 
-from flask import Flask, render_template, redirect, url_for, flash, request
+from flask import Flask, render_template, redirect, url_for, flash, json
 from flask.ext.bootstrap import Bootstrap
 from werkzeug.utils import secure_filename
 from db import MongoDB
+from bson import json_util
 import forms
 import os
 
@@ -152,6 +153,21 @@ def guestmodel(username, guest):
     guestphoto = guestprofile.get('photo')
     return render_template('guest.html', photoform=photoform, username=username, guestprofile=guestprofile,
                            guestphoto=guestphoto)
+
+@app.route('/api/admins')
+def getadmins():
+    admins = mongodb.admin_collection.find({})
+    return json_util.dumps(admins)
+
+@app.route('/api/users')
+def getusers():
+    admins = mongodb.user_collection.find({})
+    return json_util.dumps(admins)
+
+@app.route('/api/guests')
+def getguests():
+    admins = mongodb.guest_collection.find({})
+    return json_util.dumps(admins)
 
 if __name__ == '__main__':
     app.run(debug=True)

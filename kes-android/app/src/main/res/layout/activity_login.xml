@@ -30,6 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/password"
+        android:password="true"
         android:layout_gravity="center"/>
 
     <LinearLayout
@@ -44,6 +45,7 @@
             android:layout_weight="1"
             android:gravity="center">
             <ProgressBar
+                android:id="@+id/login_progressbar"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
                 android:layout_gravity="center"

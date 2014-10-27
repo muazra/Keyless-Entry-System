@@ -64,6 +64,7 @@ public class GuestsListActivity extends ListActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         getActionBar().setTitle("Guests");
+        getActionBar().setHomeButtonEnabled(true);
         return true;
     }
 

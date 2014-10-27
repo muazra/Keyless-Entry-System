@@ -64,6 +64,7 @@ public class UsersListActivity extends ListActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         getActionBar().setTitle("Users");
+        getActionBar().setHomeButtonEnabled(true);
         return true;
     }
 

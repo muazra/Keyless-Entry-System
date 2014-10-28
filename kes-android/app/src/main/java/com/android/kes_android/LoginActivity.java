@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -73,6 +71,7 @@ public class LoginActivity extends Activity {
                             SharedPreferences mPrefs = getSharedPreferences("KES_DB", 0);
                             SharedPreferences.Editor editor = mPrefs.edit();
                             editor.putString("admin", object.toString());
+                            editor.putString("admin_username", object.get("username").toString());
                             editor.apply();
                             break;
                         }
@@ -112,19 +111,4 @@ public class LoginActivity extends Activity {
             inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }

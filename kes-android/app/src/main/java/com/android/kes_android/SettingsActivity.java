@@ -6,8 +6,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.loopj.android.image.SmartImageView;
 
@@ -33,17 +35,45 @@ public class SettingsActivity extends Activity {
         mType = (TextView) findViewById(R.id.settings_profile_type);
         mUpdate = (Button) findViewById(R.id.settings_update_button);
         mPhoto = (SmartImageView) findViewById(R.id.settings_image);
+        mUpdate = (Button) findViewById(R.id.settings_update_button);
 
+        mUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Feature will be available on next release",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        refreshSettings();
+    }
+
+    private void refreshSettings(){
         SharedPreferences mPrefs = getSharedPreferences("KES_DB", 0);
-        try {
-            JSONObject object = new JSONObject(mPrefs.getString("admin", null));
-            mName.setText(object.get("name").toString());
-            mUsername.setText(object.get("username").toString());
-            mDeviceID.setText(object.get("deviceid").toString());
-            mType.setText("Admin");
-            mPhoto.setImageUrl(APILinks.PHOTOS_URL + object.get("photo").toString());
-        }catch(Exception e) {
-            e.printStackTrace();
+
+        if(mPrefs.getString("user", null) == null){
+            try {
+                JSONObject object = new JSONObject(mPrefs.getString("admin", null));
+                mName.setText(object.get("name").toString());
+                mUsername.setText(object.get("username").toString());
+                mDeviceID.setText(object.get("deviceid").toString());
+                mType.setText("Admin");
+                mPhoto.setImageUrl(APILinks.PHOTOS_URL + object.get("photo").toString());
+            }catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            try {
+                JSONObject object = new JSONObject(mPrefs.getString("user", null));
+                mName.setText(object.get("name").toString());
+                mUsername.setText(object.get("username").toString());
+                mDeviceID.setText("(permission to view not given)");
+                mType.setText("User");
+                mPhoto.setImageUrl(APILinks.PHOTOS_URL + object.get("photo").toString());
+            }catch(Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -51,7 +81,6 @@ public class SettingsActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         getActionBar().setTitle("Settings");
-        getActionBar().setHomeButtonEnabled(true);
         return true;
     }
 
@@ -66,20 +95,9 @@ public class SettingsActivity extends Activity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
                 return true;
-            case R.id.action_users:
-                intent = new Intent(this, UsersListActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
-                return true;
-            case R.id.action_guests:
-                intent = new Intent(this, GuestsListActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
-                return true;
-            case R.id.action_settings:
-                intent = new Intent(this, SettingsActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
+            case R.id.action_refresh:
+                //change so this method does AsyncTask - (in next version)
+                refreshSettings();
                 return true;
         }
         return super.onOptionsItemSelected(item);

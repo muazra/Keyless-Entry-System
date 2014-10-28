@@ -12,4 +12,20 @@
           android:icon="@drawable/ic_action_refresh"
           android:showAsAction="always"/>
 
+    <item android:id="@+id/action_users"
+          android:title="Users"
+          android:showAsAction="never"/>
+
+    <item android:id="@+id/action_guests"
+          android:title="Guests"
+          android:showAsAction="never"/>
+
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/action_logout"
+          android:title="Log Out"
+          android:showAsAction="never" />
+
 </menu>

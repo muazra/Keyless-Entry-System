@@ -46,6 +46,14 @@ public class GuestsListActivity extends ListActivity {
         mAddNewButton = (Button) findViewById(R.id.add_new);
         mAddNewButton.setText("Add New Guest");
 
+        mAddNewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Feature will be available on next release",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -174,21 +182,6 @@ public class GuestsListActivity extends ListActivity {
                 intent = new Intent(this, DashActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
-                return true;
-            case R.id.action_users:
-                intent = new Intent(this, UsersListActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
-                return true;
-            case R.id.action_guests:
-                intent = new Intent(this, GuestsListActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
-                return true;
-            case R.id.action_settings:
-                intent = new Intent(this, SettingsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
                 return true;

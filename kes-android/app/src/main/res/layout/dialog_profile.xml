@@ -17,6 +17,7 @@
     <com.loopj.android.image.SmartImageView
         android:id="@+id/dialog_profile_image"
         android:layout_width="match_parent"
+        android:layout_marginBottom="15dp"
         android:layout_height="160dp"
         android:layout_gravity="center"/>
 

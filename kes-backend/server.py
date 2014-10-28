@@ -161,13 +161,13 @@ def getadmins():
 
 @app.route('/api/users')
 def getusers():
-    admins = mongodb.user_collection.find({})
-    return json_util.dumps(admins)
+    users = mongodb.user_collection.find({})
+    return json_util.dumps(users)
 
 @app.route('/api/guests')
 def getguests():
-    admins = mongodb.guest_collection.find({})
-    return json_util.dumps(admins)
+    guests = mongodb.guest_collection.find({})
+    return json_util.dumps(guests)
 
 if __name__ == '__main__':
     app.run(debug=True)

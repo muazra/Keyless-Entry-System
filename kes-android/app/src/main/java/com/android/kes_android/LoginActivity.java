@@ -92,7 +92,7 @@ public class LoginActivity extends Activity {
                 }
                 else {
                     Toast.makeText(getApplicationContext(), "Sorry no credentials found",
-                            Toast.LENGTH_LONG).show();
+                            Toast.LENGTH_SHORT).show();
                 }
             }
 

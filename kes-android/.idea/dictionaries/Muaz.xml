@@ -2,6 +2,7 @@
   <dictionary name="Muaz">
     <words>
       <w>deviceid</w>
+      <w>guestsexist</w>
       <w>keyless</w>
       <w>usersexist</w>
     </words>

@@ -2,8 +2,11 @@
   <dictionary name="Muaz">
     <words>
       <w>deviceid</w>
+      <w>encodedstring</w>
       <w>guestsexist</w>
       <w>keyless</w>
+      <w>resized</w>
+      <w>sendtoserver</w>
       <w>usersexist</w>
     </words>
   </dictionary>

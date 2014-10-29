@@ -53,7 +53,10 @@ public class DashActivity extends ListActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            toggleDialog(imageBitmap).show();
+            Bitmap resized = Bitmap.createScaledBitmap(imageBitmap,imageBitmap.getWidth(),
+                    imageBitmap.getHeight(), true);
+
+            toggleDialog(resized).show();
         }
     }
 
@@ -71,11 +74,10 @@ public class DashActivity extends ListActivity {
 
         builder.setPositiveButton("SEND", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                //convert image to base64 and send to server
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                imageBitmap.compress(Bitmap.CompressFormat.JPEG, 75, byteArrayOutputStream);
                 byte[] byteArray = byteArrayOutputStream .toByteArray();
-                String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+                String encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP|Base64.URL_SAFE);
                 sendtoserver(encoded);
             }
         });
@@ -89,7 +91,7 @@ public class DashActivity extends ListActivity {
 
     private void sendtoserver(String encodedstring){
         AsyncHttpClient client = new AsyncHttpClient();
-        client.get(APILinks.GUESTS_URL + encodedstring, new TextHttpResponseHandler() {
+        client.get(APILinks.TOGGLE_URL + encodedstring, new TextHttpResponseHandler() {
             ProgressDialog mProgressDialog;
 
             @Override
@@ -104,17 +106,16 @@ public class DashActivity extends ListActivity {
             public void onSuccess(int i, Header[] headers, String s) {
                 mProgressDialog.dismiss();
                 if(s.equals("success")) {
-                    Toast.makeText(getApplicationContext(), "Door successfully toggled",
+                    Toast.makeText(mContext, "Door successfully toggled",
                             Toast.LENGTH_LONG).show();
                 }else {
-                    Toast.makeText(getApplicationContext(), "Door toggle request denied",
+                    Toast.makeText(mContext, "Door toggle request denied",
                             Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFinish(){
-                mProgressDialog.dismiss();
 
             }
 

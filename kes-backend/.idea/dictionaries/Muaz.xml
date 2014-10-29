@@ -9,6 +9,7 @@
       <w>adminsettings</w>
       <w>adminusers</w>
       <w>deviceid</w>
+      <w>encodedstring</w>
       <w>endfor</w>
       <w>getadmins</w>
       <w>getguests</w>
@@ -21,6 +22,8 @@
       <w>newadmin</w>
       <w>newuser</w>
       <w>photoform</w>
+      <w>toggledoor</w>
+      <w>toggledoorimage</w>
       <w>userguests</w>
       <w>userhome</w>
       <w>userlink</w>

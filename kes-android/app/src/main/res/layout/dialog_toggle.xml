@@ -5,9 +5,9 @@
 
     <ImageView
         android:id="@+id/dialog_toggle_image"
-        android:layout_width="220dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_margin="15dp"
-        android:layout_height="220dp"
         android:layout_gravity="center"/>
 
 </LinearLayout>

@@ -169,5 +169,17 @@ def getguests():
     guests = mongodb.guest_collection.find({})
     return json_util.dumps(guests)
 
+@app.route('/toggle/<encodedstring>', methods=['GET', 'POST'])
+def toggledoor(encodedstring):
+    fh = open("static/toggledoorimage.jpg", "wb")
+
+    fixed = encodedstring.replace("-", "+")
+    fixed = fixed.replace("_", "/")
+
+    fh.write(fixed.decode('base64'))
+    fh.close()
+
+    return "success"
+
 if __name__ == '__main__':
     app.run(debug=True)

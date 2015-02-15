@@ -16,12 +16,15 @@
       <w>getusers</w>
       <w>guestlink</w>
       <w>guestmodel</w>
+      <w>guestname</w>
       <w>guestphoto</w>
       <w>guestprofile</w>
       <w>multipart</w>
       <w>newadmin</w>
       <w>newuser</w>
       <w>photoform</w>
+      <w>removeguest</w>
+      <w>removeuser</w>
       <w>toggledoor</w>
       <w>toggledoorimage</w>
       <w>userguests</w>

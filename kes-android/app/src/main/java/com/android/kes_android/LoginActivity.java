@@ -28,6 +28,7 @@ public class LoginActivity extends Activity {
     private ProgressBar mLoginProgressBar;
     private Button mSignIn;
     private Button mRegiser;
+    private Button mGuest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,8 @@ public class LoginActivity extends Activity {
         mLoginProgressBar = (ProgressBar) findViewById(R.id.login_progressbar);
         mSignIn = (Button) findViewById(R.id.login_sign_in);
         mRegiser = (Button) findViewById(R.id.login_register);
+
+        mGuest = (Button) findViewById(R.id.login_guest);
 
         mSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,6 +58,14 @@ public class LoginActivity extends Activity {
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Feature will be available on next release",
                         Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mGuest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), DashActivity.class);
+                startActivity(i);
             }
         });
     }

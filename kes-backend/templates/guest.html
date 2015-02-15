@@ -4,11 +4,11 @@
 {% block page_content %}
 
 <div class="page-header">
-    <h3>{{guestprofile.get("name")}}</h3>
+    <h3>{{guestprofile.get("name")}} (Guest)</h3>
 </div>
 
 <h5 class="usermodel"><strong>Name</strong> - {{guestprofile.get("name")}}</h5>
-<h5 class="usermodel"><strong>Parent Admin</strong> - {{guestprofile.get("parent_name")}}</h5>
+<h5 class="usermodel"><strong>Under Admin</strong> - {{guestprofile.get("parent_name")}}</h5>
 <h5 class="usermodel"><strong>Profile Type</strong> - Guest</h5>
 
 <div class="photo-border"></div>
@@ -20,8 +20,10 @@
     {{ wtf.quick_form(photoform) }}
 </form>
 
+<a href="{{url_for('removeguest', guestname=guestname)}}" class="button-delete">Delete Guest</a>
+
 <div class="back">
-<a href="{{url_for('adminguests', username=username)}}">Back to Guests Panel</a>
+<a href="{{url_for('guests')}}">Back to Guests Panel</a>
 </div>
 
 {% endblock %}

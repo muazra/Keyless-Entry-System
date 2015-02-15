@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "baselogin.html" %}
 
 {% block head %}
 {{ super() }}
@@ -14,15 +14,15 @@
             <button type="button" class="navbar-toggle"
                     data-toggle="collapse" data-target=".navbar-collapse"><span class="sr-only">Toggle navigation</span>
             </button>
-            <a class="navbar-brand" href="{{url_for('adminhome', username=username)}}">KES</a>
+            <a class="navbar-brand" href="{{url_for('home')}}">KES</a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="{{url_for('adminhome', username=username)}}">Home</a></li>
-                <li><a href="{{url_for('adminusers', username=username)}}">Users</a></li>
-                <li><a href="{{url_for('adminguests', username=username)}}">Guests</a></li>
-                <li><a href="{{url_for('adminsettings', username=username)}}">Settings</a></li>
-                <li><a href="/">Logout</a></li>
+                <li><a href="{{url_for('home')}}">Home</a></li>
+                <li><a href="{{url_for('users')}}">Users</a></li>
+                <li><a href="{{url_for('guests')}}">Guests</a></li>
+                <li><a href="{{url_for('settings')}}">Settings</a></li>
+                <li><a href="{{url_for('logout')}}">Logout</a></li>
             </ul>
         </div>
     </div>

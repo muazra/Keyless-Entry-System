@@ -4,12 +4,12 @@
 {% block page_content %}
 
 <div class="page-header">
-    <h3>{{userprofile.get("name")}}</h3>
+    <h3>{{userprofile.get("name")}} (User)</h3>
 </div>
 
 <h5 class="usermodel"><strong>Name</strong> - {{userprofile.get("name")}}</h5>
 <h5 class="usermodel"><strong>Username</strong> - {{userprofile.get("username")}}</h5>
-<h5 class="usermodel"><strong>Parent Admin</strong> - {{userprofile.get("parent_name")}}</h5>
+<h5 class="usermodel"><strong>Under Admin</strong> - {{userprofile.get("parent_name")}}</h5>
 <h5 class="usermodel"><strong>Profile Type</strong> - User</h5>
 
 <div class="photo-border"></div>
@@ -21,8 +21,10 @@
     {{ wtf.quick_form(photoform) }}
 </form>
 
+<a href="{{url_for('removeuser', username=username)}}" class="button-delete">Delete User</a>
+
 <div class="back">
-<a href="{{url_for('adminusers', username=username)}}">Back to Users Panel</a>
+<a href="{{url_for('users')}}">Back to Users Panel</a>
 </div>
 
 {% endblock %}

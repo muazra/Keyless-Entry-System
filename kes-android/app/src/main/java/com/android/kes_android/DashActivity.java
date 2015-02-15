@@ -38,6 +38,11 @@ public class DashActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash);
 
+        /**
+         * Callback Listener for Button that
+         * will allow for logged-in user to
+         * upload image taken via camera.
+         */
         mToggle = (Button) findViewById(R.id.dash_toggle);
         mToggle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,6 +53,12 @@ public class DashActivity extends ListActivity {
         });
     }
 
+    /**
+     * Method that will return the necessary
+     * image taken via camera and will
+     * compress the image to its ideal
+     * length and width
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {

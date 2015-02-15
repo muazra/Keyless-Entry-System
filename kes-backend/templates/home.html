@@ -8,20 +8,11 @@
     <h4>Welcome, {{ adminname }}!</h4>
 </div>
 
-<div class="admin-activity">
-    <h5 class="home">Recent Admin Activity</h5>
-</div>
-
-<div class="user-activity">
-    <h5 class="home">Recent User Activity</h5>
-</div>
-
-<div class="guest-activity">
-    <h5 class="home">Recent Guest Activity</h5>
-</div>
-
 <div class="door-activity">
     <h5 class="home">Recent Door Activity</h5>
+    {% for activity in door_activity %}
+    <li><h5>{{activity.get("details")}}</h5></li>
+    {% endfor %}
 </div>
 
 <div class="door-current-status">

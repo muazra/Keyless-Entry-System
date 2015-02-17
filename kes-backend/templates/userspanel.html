@@ -10,7 +10,7 @@
 <div class="users-list">
     <h5 class="users">Current List of Users</h5>
     {% for user in users %}
-    <li><a href="{{user.get('link')}}">{{user.get('name')}}</a></li>
+    <li><a href="{{url_for('usermodel', user = user.get('username'))}}">{{user.get('full_name')}}</a></li>
     {% endfor %}
 </div>
 
@@ -19,5 +19,7 @@
 <form action="{{url_for('users')}}" method="POST" enctype="multipart/form-data">
     {{ wtf.quick_form(form) }}
 </form>
+
+<br>
 
 {% endblock %}

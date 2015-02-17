@@ -156,3 +156,10 @@ li{
 .button-delete:active {
 	background-color: rgb( 187, 40, 74 );
 }
+
+#photolist li
+{
+    display: inline;
+    list-style-type: none;
+    padding-right: 20px;
+}

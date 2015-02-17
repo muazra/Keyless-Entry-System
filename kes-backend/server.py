@@ -55,12 +55,19 @@ def newadmin():
             flash("Username already exists. Please try again.")
             return redirect(url_for('newadmin'))
 
-        filename = secure_filename(form.photo.data.filename)
-        form.photo.data.save('static/' + filename)
+        photo_simplename = secure_filename(form.photo.data.filename)
+        photo_filepath = "static/" + photo_simplename
+        form.photo.data.save(photo_filepath)
 
-        mongodb.add_admin(form.name.data, form.username.data, form.password.data, form.deviceid.data, filename)
+        mongodb.add_admin(form.name.data, form.username.data, form.password.data, form.deviceid.data)
+        photo_add = mongodb.add_photo("admin", form.username.data, photo_filepath, photo_simplename)
+
+        if photo_add is -1:
+            flash("Please choose photo with unique file name")
+            return redirect(url_for('newadmin'))
+
         mongodb.claim_device(form.deviceid.data, form.username.data)
-        flash("Account Creation Successful. Please login below.")
+        flash("Account Creation Successful. Welcome.")
         session['admin'] = form.username.data
         return redirect(url_for('login'))
 
@@ -73,25 +80,32 @@ def users():
         return redirect(url_for('login'))
 
     form = forms.NewUserForm()
-    users_list = mongodb.user_collection.find({'parent_username': session['admin']})
+    users_list = mongodb.user_collection.find({'admin_username': session['admin']})
 
     if form.validate_on_submit():
         if mongodb.user_exist(form.username.data) is True:
             flash("Username already exists. Please try again.")
             return redirect(url_for('users'))
 
-        filename = secure_filename(form.photo.data.filename)
-        form.photo.data.save('static/' + filename)
+        photo_simplename = secure_filename(form.photo.data.filename)
+        photo_filepath = "static/" + photo_simplename
 
-        parent_name = mongodb.admin_collection.find_one({'username': session['admin']}).get("name")
-        userlink = "/users/" + form.username.data
+        photo_add = mongodb.add_photo("user", form.username.data, photo_filepath, photo_simplename)
+        if photo_add is -1:
+            flash("Please choose photo with unique file name")
+            return redirect(url_for('users'))
 
-        mongodb.add_user(session['admin'], parent_name, form.name.data, form.username.data, form.password.data,
-                         filename, userlink)
+        form.photo.data.save(photo_filepath)
+
+        admin_name = mongodb.admin_collection.find_one({'username': session['admin']}).get("full_name")
+        userlink = form.username.data
+
+        mongodb.add_user(session['admin'], admin_name, form.name.data, form.username.data,
+                         form.password.data, userlink)
         flash("User successfully added")
         return redirect(url_for('users'))
 
-    return render_template('userspanel.html', form=form, username=session['admin'], users=users_list)
+    return render_template('userspanel.html', form=form, users=users_list)
 
 
 @app.route('/guests', methods=['GET', 'POST'])
@@ -100,24 +114,31 @@ def guests():
         return redirect(url_for('login'))
 
     form = forms.NewGuestForm()
-    guests_list = mongodb.guest_collection.find({'parent_username': session['admin']})
+    guests_list = mongodb.guest_collection.find({'admin_username': session['admin']})
 
     if form.validate_on_submit():
         if mongodb.guest_exist(form.name.data) is True:
             flash("Guest already exists. Please try again.")
             return redirect(url_for('guests'))
 
-        filename = secure_filename(form.photo.data.filename)
-        form.photo.data.save('static/' + filename)
+        photo_simplename = secure_filename(form.photo.data.filename)
+        photo_filepath = "static/" + photo_simplename
 
-        parent_name = mongodb.admin_collection.find_one({'username': session['admin']}).get("name")
-        guestlink = "/guests/" + form.name.data
+        photo_add = mongodb.add_photo("guest", form.name.data, photo_filepath, photo_simplename)
+        if photo_add is -1:
+            flash("Please choose photo with unique file name")
+            return redirect(url_for('users'))
 
-        mongodb.add_guest(session['admin'], parent_name, form.name.data, filename, guestlink)
+        form.photo.data.save(photo_filepath)
+
+        admin_name = mongodb.admin_collection.find_one({'username': session['admin']}).get("full_name")
+        guestlink = form.name.data
+
+        mongodb.add_guest(session['admin'], admin_name, form.name.data, guestlink)
         flash("Guest successfully added")
         return redirect(url_for('guests'))
 
-    return render_template('guestspanel.html', form=form, username=session['admin'], guests=guests_list)
+    return render_template('guestspanel.html', form=form, guests=guests_list)
 
 
 @app.route('/settings', methods=['GET', 'POST'])
@@ -127,18 +148,22 @@ def settings():
 
     photoform = forms.PhotoForm()
     if photoform.validate_on_submit():
-        original_filename = mongodb.admin_collection.find_one({'username': session['admin']}).get("photo")
-        os.remove("static/" + original_filename)
+        photo_simplename = secure_filename(photoform.photo.data.filename)
+        photo_filepath = "static/" + photo_simplename
 
-        filename = secure_filename(photoform.photo.data.filename)
-        photoform.photo.data.save('static/' + filename)
-        mongodb.admin_collection.update({'username': session['admin']}, {'$set': {'photo': filename}})
+        photo_add = mongodb.add_photo("admin", session['admin'], photo_filepath, photo_simplename)
+        if photo_add is -1:
+            flash("Please choose photo with unique file name")
+            return redirect(url_for('settings'))
+
+        photoform.photo.data.save(photo_filepath)
         return redirect(url_for('settings'))
 
     adminprofile = mongodb.admin_collection.find_one({'username': session['admin']})
-    adminphoto = adminprofile.get("photo")
-    return render_template('settings.html', photoform=photoform, username=session['admin'],
-                           adminprofile=adminprofile, adminphoto=adminphoto)
+    photos = mongodb.photo_collection.find({'profile_type': "admin", 'profile_name': session['admin']})
+
+    return render_template('settings.html', photoform=photoform, adminprofile=adminprofile,
+                           adminphotos=photos)
 
 
 @app.route('/home', methods=['GET', 'POST'])
@@ -150,62 +175,84 @@ def home():
 
 @app.route('/users/<user>', methods=['GET', 'POST'])
 def usermodel(user):
+    # user in this case is user's username
     if 'admin' not in session:
         return redirect(url_for('login'))
 
     photoform = forms.PhotoForm()
     if photoform.validate_on_submit():
-        original_filename = mongodb.user_collection.find_one({'username': user}).get("photo")
-        os.remove("static/" + original_filename)
+        photo_simplename = secure_filename(photoform.photo.data.filename)
+        photo_filepath = "static/" + photo_simplename
 
-        filename = secure_filename(photoform.photo.data.filename)
-        photoform.photo.data.save('static/' + filename)
-        mongodb.user_collection.update({'username': user}, {'$set': {'photo': filename}})
-        return redirect(url_for('users'))
+        photo_add = mongodb.add_photo("user", user, photo_filepath, photo_simplename)
+        if photo_add is -1:
+            flash("Please choose photo with unique file name")
+            return redirect(url_for('usermodel', user=user))
+
+        photoform.photo.data.save(photo_filepath)
+        return redirect(url_for('usermodel', user=user))
 
     userprofile = mongodb.user_collection.find_one({'username': user})
-    userphoto = userprofile.get('photo')
+    photos = mongodb.photo_collection.find({'profile_type': "user", 'profile_name': user})
+
     return render_template('user.html', photoform=photoform, username=user, userprofile=userprofile,
-                           userphoto=userphoto)
+                           userphotos=photos)
 
 
 @app.route('/guests/<guest>', methods=['GET', 'POST'])
 def guestmodel(guest):
+    # guest in this case is guest's name
     if 'admin' not in session:
         return redirect(url_for('login'))
 
     photoform = forms.PhotoForm()
     if photoform.validate_on_submit():
-        original_filename = mongodb.guest_collection.find_one({'name': guest}).get("photo")
-        os.remove("static/" + original_filename)
+        photo_simplename = secure_filename(photoform.photo.data.filename)
+        photo_filepath = "static/" + photo_simplename
 
-        filename = secure_filename(photoform.photo.data.filename)
-        photoform.photo.data.save('static/' + filename)
-        mongodb.guest_collection.update({'name': guest}, {'$set': {'photo': filename}})
-        return redirect(url_for('guests'))
+        photo_add = mongodb.add_photo("guest", guest, photo_filepath, photo_simplename)
+        if photo_add is -1:
+            flash("Please choose photo with unique file name")
+            return redirect(url_for('guestmodel', guest=guest))
 
-    guestprofile = mongodb.guest_collection.find_one({'name': guest})
-    guestphoto = guestprofile.get('photo')
+        photoform.photo.data.save(photo_filepath)
+        return redirect(url_for('guestmodel', guest=guest))
+
+    guestprofile = mongodb.guest_collection.find_one({'full_name': guest})
+    photos = mongodb.photo_collection.find({'profile_type': "guest", 'profile_name': guest})
+
     return render_template('guest.html', photoform=photoform, guestname=guest, guestprofile=guestprofile,
-                           guestphoto=guestphoto)
+                           guestphotos=photos)
 
 
-@app.route('/users/<username>/remove', methods=['GET', 'POST'])
+@app.route('/<username>/remove', methods=['GET', 'POST'])
 def removeuser(username):
     if 'admin' not in session:
         return redirect(url_for('login'))
-    mongodb.delete_user(username, os)
-    flash("Guest successfully added")
+    mongodb.delete_user(username)
+    mongodb.delete_all_photos("user", username, os)
+    flash("User successfully deleted")
     return redirect(url_for('home'))
 
 
-@app.route('/guests/<guestname>/remove', methods=['GET', 'POST'])
+@app.route('/<guestname>/remove', methods=['GET', 'POST'])
 def removeguest(guestname):
     if 'admin' not in session:
         return redirect(url_for('login'))
-    mongodb.delete_guest(guestname, os)
+    mongodb.delete_guest(guestname)
+    mongodb.delete_all_photos("guest", guestname, os)
     flash("Guest successfully deleted")
     return redirect(url_for('home'))
+
+
+@app.route('/removephoto/<photosimplename>', methods=['GET', 'POST'])
+def removephoto(photosimplename):
+    if 'admin' not in session:
+        return redirect(url_for('login'))
+    if photosimplename is not None:
+        mongodb.delete_one_photo(photosimplename, os)
+        flash("Image deleted")
+        return redirect(url_for('home'))
 
 # API
 

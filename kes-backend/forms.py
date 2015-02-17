@@ -45,7 +45,7 @@ class NewGuestForm(Form):
 
 
 class PhotoForm(Form):
-    photo = FileField('Update Photo:', validators=[
+    photo = FileField('Upload New Photo:', validators=[
         FileRequired(),
         FileAllowed(['jpg', 'png'], 'Images only!')
     ])

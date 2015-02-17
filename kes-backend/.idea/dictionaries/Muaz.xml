@@ -11,6 +11,7 @@
       <w>deviceid</w>
       <w>encodedstring</w>
       <w>endfor</w>
+      <w>filepath</w>
       <w>getadmins</w>
       <w>getguests</w>
       <w>getusers</w>
@@ -22,9 +23,15 @@
       <w>multipart</w>
       <w>newadmin</w>
       <w>newuser</w>
+      <w>photocontainer</w>
       <w>photoform</w>
+      <w>photolink</w>
+      <w>photolist</w>
       <w>removeguest</w>
+      <w>removephoto</w>
       <w>removeuser</w>
+      <w>simplename</w>
+      <w>simplepath</w>
       <w>toggledoor</w>
       <w>toggledoorimage</w>
       <w>userguests</w>

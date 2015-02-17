@@ -4,17 +4,26 @@
 {% block page_content %}
 
 <div class="page-header">
-    <h3>{{guestprofile.get("name")}} (Guest)</h3>
+    <h3>{{guestprofile.get("full_name")}} (Guest)</h3>
 </div>
 
-<h5 class="usermodel"><strong>Name</strong> - {{guestprofile.get("name")}}</h5>
-<h5 class="usermodel"><strong>Under Admin</strong> - {{guestprofile.get("parent_name")}}</h5>
+<h5 class="usermodel"><strong>Name</strong> - {{guestprofile.get("full_name")}}</h5>
+<h5 class="usermodel"><strong>Under Admin</strong> - {{guestprofile.get("admin_name")}}</h5>
 <h5 class="usermodel"><strong>Profile Type</strong> - Guest</h5>
 
 <div class="photo-border"></div>
 
-<h4>Current Photo:</h4>
-<img src="/static/{{guestphoto}}" alt="Guest Picture" style="width:150px;height:150px"> <br><br>
+<h4>Photos:</h4>
+<div id="photocontainer">
+    <ul id="photolist">
+    {% for photo in guestphotos %}
+    <li>
+        <img src="/static/{{photo.get('photo_simplename')}}" alt="Guest Picture" style="width:200px;height:200px">
+        <a href= " {{ url_for('removephoto', photosimplename = photo.get('photo_simplename') ) }} " class="button-delete">Delete Photo</a>
+    </li>
+    {% endfor %}
+    </ul>
+</div>
 
 <form action="{{guestprofile.get('link')}}" method="POST" enctype="multipart/form-data">
     {{ wtf.quick_form(photoform) }}
@@ -25,5 +34,7 @@
 <div class="back">
 <a href="{{url_for('guests')}}">Back to Guests Panel</a>
 </div>
+
+<br>
 
 {% endblock %}

@@ -12,14 +12,25 @@
 <h5 class="settings"><strong>DeviceID</strong> - {{adminprofile.get("deviceid")}}</h5>
 <h5 class="settings"><strong>Profile Type</strong> - Admin</h5>
 
-
 <div class="photo-border"></div>
 
-<h4>Current Photo:</h4>
-<img src="/static/{{adminphoto}}" alt="Admin Picture" style="width:150px;height:150px">
-<br><br>
+<h4>Photos:</h4>
+<div id="photocontainer">
+    <ul id="photolist">
+    {% for photo in adminphotos %}
+    <li>
+        <img src={{photo.get("photo_filepath")}} alt="Admin Picture" style="width:200px;height:200px">
+        <a href= " {{ url_for('removephoto', photosimplename = photo.get('photo_simplename') ) }} " class="button-delete">Delete Photo</a>
+    </li>
+    {% endfor %}
+    </ul>
+</div>
+
+
 <form action="{{url_for('settings')}}" method="POST" enctype="multipart/form-data">
     {{ wtf.quick_form(photoform) }}
 </form>
+
+<br>
 
 {% endblock %}

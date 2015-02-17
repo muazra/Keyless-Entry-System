@@ -24,6 +24,9 @@ class MongoDB:
     user_collection = db.user_collection
     guest_collection = db.guest_collection
     door_collection = db.door_collection
+    photo_collection = db.photo_collection
+
+    # Device Collection
 
     def device_available(self, device_id):
         if self.device_collection.find_one({'device_id': device_id, 'available': "true"}) is None:
@@ -39,12 +42,13 @@ class MongoDB:
     def update_device_battery(self, device_id, battery):
         self.device_collection.update({'device_id': device_id}, {'$set': {'battery': battery + "%"}})
 
-    def add_admin(self, name, username, password, deviceid, photo):
-        username = {'name': name,
+    # Admin Collection
+
+    def add_admin(self, full_name, username, password, deviceid):
+        username = {'full_name': full_name,
                     'username': username,
                     'password': password,
-                    'deviceid': deviceid,
-                    'photo': photo}
+                    'deviceid': deviceid}
         self.admin_collection.insert(username)
 
     def admin_exist(self, username):
@@ -57,13 +61,14 @@ class MongoDB:
             return False
         return True
 
-    def add_user(self, parent_username, parent_name, name, username, password, photo, userlink):
-        username = {'parent_username': parent_username,
-                    'parent_name': parent_name,
-                    'name': name,
+    # User Collection
+
+    def add_user(self, admin_username, admin_name, full_name, username, password, userlink):
+        username = {'admin_username': admin_username,
+                    'admin_name': admin_name,
+                    'full_name': full_name,
                     'username': username,
                     'password': password,
-                    'photo': photo,
                     'link': userlink}
         self.user_collection.insert(username)
 
@@ -72,16 +77,16 @@ class MongoDB:
             return False
         return True
 
-    def delete_user(self, username, os):
+    def delete_user(self, username):
         user = self.user_collection.find_one({'username': username})
-        os.remove("static/" + user.get("photo"))
         self.user_collection.remove(user)
 
-    def add_guest(self, parent_username, parent_name, name, photo, guestlink):
-        name = {'parent_username': parent_username,
-                'parent_name': parent_name,
-                'name': name,
-                'photo': photo,
+    # Guest Collection
+
+    def add_guest(self, admin_username, admin_name, full_name, guestlink):
+        name = {'admin_username': admin_username,
+                'admin_name': admin_name,
+                'full_name': full_name,
                 'link': guestlink}
         self.guest_collection.insert(name)
 
@@ -90,10 +95,35 @@ class MongoDB:
             return False
         return True
 
-    def delete_guest(self, guestname, os):
+    def delete_guest(self, guestname):
         guest = self.user_collection.find_one({'name': guestname})
-        os.remove("static/" + guestname.get("photo"))
         self.guest_collection.remove(guest)
+
+    # Photo Collection
+
+    def add_photo(self, profile_type, username, photo_filepath, photo_simplename):
+        photo_check = self.photo_collection.find_one({"photo_filepath": photo_filepath})
+        if photo_check is not None:
+            return -1
+
+        photo = {'profile_type': profile_type,
+                 'profile_name': username,
+                 'photo_filepath': photo_filepath,
+                 'photo_simplename': photo_simplename}
+        self.photo_collection.insert(photo)
+
+    def delete_all_photos(self, profile_type, username, os):
+        photos = self.photo_collection.find({'profile_type': profile_type, 'profile_name': username})
+        for photo in photos:
+            os.remove(photo.get("photo_filepath"))
+            self.photo_collection.remove(photo)
+
+    def delete_one_photo(self, photo_simplename, os):
+        photo = self.photo_collection.find_one({'photo_simplename': photo_simplename})
+        os.remove(photo.get("photo_filepath"))
+        self.photo_collection.remove(photo)
+
+    # Door Toggling Activities
 
     # Details of what door "activity" is will need to be defined i.e. picture, guest/user, timestamp, etc.
     def add_door_activity(self, admin, activity):

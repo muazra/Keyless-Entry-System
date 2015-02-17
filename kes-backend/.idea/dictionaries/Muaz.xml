@@ -1,6 +1,9 @@
 <component name="ProjectDictionaryState">
   <dictionary name="Muaz">
     <words>
+      <w>addguest</w>
+      <w>addphoto</w>
+      <w>adduser</w>
       <w>adminguests</w>
       <w>adminhome</w>
       <w>adminlogin</w>
@@ -9,6 +12,9 @@
       <w>adminprofile</w>
       <w>adminsettings</w>
       <w>adminusers</w>
+      <w>arduino</w>
+      <w>deleteguest</w>
+      <w>deleteuser</w>
       <w>deviceid</w>
       <w>encodedstring</w>
       <w>endfor</w>

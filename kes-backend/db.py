@@ -123,6 +123,9 @@ class MongoDB:
 
     def delete_one_photo(self, photo_simplename, os):
         photo = self.photo_collection.find_one({'photo_simplename': photo_simplename})
+        if photo is None:
+            return -1
+
         os.remove(photo.get("photo_filepath"))
         self.photo_collection.remove(photo)
 

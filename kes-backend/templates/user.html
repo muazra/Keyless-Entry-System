@@ -19,18 +19,18 @@
     <ul id="photolist">
     {% for photo in userphotos %}
     <li>
-        <img src="/static/{{photo.get('photo_simplename')}}" alt="User Picture" style="width:200px;height:200px">
+        <img src="/static/{{photo.get('photo_simplename')}}" alt="User Image" style="width:200px;height:200px">
         <a href= " {{ url_for('removephoto', photosimplename = photo.get('photo_simplename') ) }} " class="button-delete">Delete Photo</a>
     </li>
     {% endfor %}
     </ul>
 </div>
 
-<form action="{{userprofile.get('link')}}" method="POST" enctype="multipart/form-data">
+<form action="{{ url_for('usermodel', user = userprofile.get('username')) }}" method="POST" enctype="multipart/form-data">
     {{ wtf.quick_form(photoform) }}
 </form>
 
-<a href="{{url_for('removeuser', username=username)}}" class="button-delete">Delete User</a>
+<a href="{{url_for('removeuser', username = userprofile.get('username')) }}" class="button-delete">Delete User</a>
 
 <div class="back">
 <a href="{{url_for('users')}}">Back to Users Panel</a>

@@ -63,17 +63,21 @@ class MongoDB:
 
     # User Collection
 
-    def add_user(self, admin_username, admin_name, full_name, username, password, userlink):
+    def add_user(self, admin_username, admin_name, full_name, username, password):
         username = {'admin_username': admin_username,
                     'admin_name': admin_name,
                     'full_name': full_name,
                     'username': username,
-                    'password': password,
-                    'link': userlink}
+                    'password': password}
         self.user_collection.insert(username)
 
     def user_exist(self, username):
         if self.user_collection.find_one({'username': username}) is None:
+            return False
+        return True
+
+    def user_allow_login(self, username, password):
+        if self.user_collection.find_one({'username': username, 'password': password}) is None:
             return False
         return True
 
@@ -83,20 +87,19 @@ class MongoDB:
 
     # Guest Collection
 
-    def add_guest(self, admin_username, admin_name, full_name, guestlink):
+    def add_guest(self, admin_username, admin_name, full_name):
         name = {'admin_username': admin_username,
                 'admin_name': admin_name,
-                'full_name': full_name,
-                'link': guestlink}
+                'full_name': full_name}
         self.guest_collection.insert(name)
 
-    def guest_exist(self, name):
-        if self.guest_collection.find_one({'name': name}) is None:
+    def guest_exist(self, guestname):
+        if self.guest_collection.find_one({'full_name': guestname}) is None:
             return False
         return True
 
     def delete_guest(self, guestname):
-        guest = self.user_collection.find_one({'name': guestname})
+        guest = self.user_collection.find_one({'full_name': guestname})
         self.guest_collection.remove(guest)
 
     # Photo Collection
@@ -126,9 +129,12 @@ class MongoDB:
     # Door Toggling Activities
 
     # Details of what door "activity" is will need to be defined i.e. picture, guest/user, timestamp, etc.
-    def add_door_activity(self, admin, activity):
-        activity = {'admin': admin,
-                    'details': activity}
+    def add_door_activity(self, profile_type, username, details, granted):
+        activity = {'profile_type': profile_type,
+                    'username': username,
+                    'details': details,
+                    'granted': granted}
+
         self.door_collection.insert(activity)
 
     def __init__(self):

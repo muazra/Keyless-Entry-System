@@ -3,6 +3,7 @@
     <words>
       <w>adminguests</w>
       <w>adminhome</w>
+      <w>adminlogin</w>
       <w>adminname</w>
       <w>adminphoto</w>
       <w>adminprofile</w>
@@ -34,9 +35,13 @@
       <w>simplepath</w>
       <w>toggledoor</w>
       <w>toggledoorimage</w>
+      <w>updateadmin</w>
+      <w>updateguest</w>
+      <w>updateuser</w>
       <w>userguests</w>
       <w>userhome</w>
       <w>userlink</w>
+      <w>userlogin</w>
       <w>usermodel</w>
       <w>userphoto</w>
       <w>userprofile</w>

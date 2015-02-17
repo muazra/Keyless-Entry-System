@@ -19,7 +19,7 @@
     <ul id="photolist">
     {% for photo in adminphotos %}
     <li>
-        <img src={{photo.get("photo_filepath")}} alt="Admin Picture" style="width:200px;height:200px">
+        <img src={{photo.get("photo_filepath")}} alt="Admin Image" style="width:200px;height:200px">
         <a href= " {{ url_for('removephoto', photosimplename = photo.get('photo_simplename') ) }} " class="button-delete">Delete Photo</a>
     </li>
     {% endfor %}

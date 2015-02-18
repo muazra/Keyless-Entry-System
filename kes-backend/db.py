@@ -23,8 +23,10 @@ class MongoDB:
     admin_collection = db.admin_collection
     user_collection = db.user_collection
     guest_collection = db.guest_collection
-    door_collection = db.door_collection
     photo_collection = db.photo_collection
+
+    door_collection = db.door_collection
+    toggle_collection = db.toggle_collection
 
     # Device Collection
 
@@ -44,11 +46,11 @@ class MongoDB:
 
     # Admin Collection
 
-    def add_admin(self, full_name, username, password, deviceid):
+    def add_admin(self, full_name, username, password, device_id):
         username = {'full_name': full_name,
                     'username': username,
                     'password': password,
-                    'deviceid': deviceid}
+                    'device_id': device_id}
         self.admin_collection.insert(username)
 
     def admin_exist(self, username):
@@ -131,14 +133,23 @@ class MongoDB:
 
     # Door Toggling Activities
 
-    # Details of what door "activity" is will need to be defined i.e. picture, guest/user, timestamp, etc.
-    def add_door_activity(self, profile_type, username, details, granted):
-        activity = {'profile_type': profile_type,
-                    'username': username,
-                    'details': details,
-                    'granted': granted}
+    def add_toggle_activity(self, profile_type, profile_name, photo_simplename, photo_filepath):
+        toggle = {'profile_type': profile_type,
+                  'profile_name': profile_name,
+                  'photo_simplename': photo_simplename,
+                  'photo_filepath': photo_filepath}
+        self.toggle_collection.insert(toggle)
 
-        self.door_collection.insert(activity)
+    def delete_toggle_activity(self, photo_simplename):
+        self.toggle_collection.remove({'photo_simplename': photo_simplename})
+
+    def add_door_activity(self, admin, profile_type, username, photo_simplename, granted):
+        door = {'admin': admin,
+                'profile_type': profile_type,
+                'username': username,
+                'photo_simplename': photo_simplename,
+                'granted': granted}
+        self.door_collection.insert(door)
 
     def __init__(self):
         return

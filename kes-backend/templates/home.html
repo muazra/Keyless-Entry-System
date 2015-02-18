@@ -11,16 +11,16 @@
 <div class="door-activity">
     <h5 class="home">Recent Door Activity</h5>
     {% for activity in door_activity %}
-    <li><h5>{{activity.get("details")}}</h5></li>
+    <li><h5>{{activity.get("_id")}}</h5></li>
     {% endfor %}
 </div>
 
 <div class="door-current-status">
-    <h5>Current Door Status - n/a</h5>
+    <h5>Current Door Status - {{device.get('status')}}</h5>
 </div>
 
 <div class="door-current-power">
-    <h5>Device Battery Life - n/a</h5>
+    <h5>Device Battery Life - {{device.get('battery')}}</h5>
 </div>
 
 {% endblock %}

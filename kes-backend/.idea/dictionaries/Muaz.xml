@@ -18,6 +18,7 @@
       <w>deviceid</w>
       <w>encodedstring</w>
       <w>endfor</w>
+      <w>facialrecognition</w>
       <w>filepath</w>
       <w>getadmins</w>
       <w>getguests</w>
@@ -41,7 +42,9 @@
       <w>simplepath</w>
       <w>toggledoor</w>
       <w>toggledoorimage</w>
+      <w>toggledoorstatus</w>
       <w>updateadmin</w>
+      <w>updatedoorbattery</w>
       <w>updateguest</w>
       <w>updateuser</w>
       <w>userguests</w>

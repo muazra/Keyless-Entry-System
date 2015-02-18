@@ -5,7 +5,6 @@ from flask import Flask, render_template, redirect, url_for, flash, session, req
 from flask.ext.bootstrap import Bootstrap
 from werkzeug.utils import secure_filename
 from db import MongoDB
-from bson import json_util
 from tools import jsonify
 import forms
 import os
@@ -67,7 +66,7 @@ def newadmin():
             return redirect(url_for('newadmin'))
 
         photo_simplename = "admin_" + form.username.data + "_" + secure_filename(form.photo.data.filename)
-        photo_filepath = "static/" + photo_simplename
+        photo_filepath = "static/" + "admin_photos/" + photo_simplename
         form.photo.data.save(photo_filepath)
 
         mongodb.add_admin(form.name.data, form.username.data, form.password.data, form.deviceid.data)
@@ -100,7 +99,7 @@ def users():
             return redirect(url_for('users'))
 
         photo_simplename = "user_" + form.username.data + "_" + secure_filename(form.photo.data.filename)
-        photo_filepath = "static/" + photo_simplename
+        photo_filepath = "static/" + "user_photos/" + photo_simplename
 
         photo_add = mongodb.add_photo("user", form.username.data, photo_filepath, photo_simplename)
         if photo_add is -1:
@@ -131,7 +130,7 @@ def guests():
             return redirect(url_for('guests'))
 
         photo_simplename = "guest_" + form.name.data + "_" + secure_filename(form.photo.data.filename)
-        photo_filepath = "static/" + photo_simplename
+        photo_filepath = "static/" + "guest_photos/" + photo_simplename
 
         photo_add = mongodb.add_photo("guest", form.name.data, photo_filepath, photo_simplename)
         if photo_add is -1:
@@ -155,7 +154,7 @@ def settings():
     photoform = forms.PhotoForm()
     if photoform.validate_on_submit():
         photo_simplename = "admin_" + session['admin'] + "_" + secure_filename(photoform.photo.data.filename)
-        photo_filepath = "static/" + photo_simplename
+        photo_filepath = "static/" + "admin_photos/" + photo_simplename
 
         photo_add = mongodb.add_photo("admin", session['admin'], photo_filepath, photo_simplename)
         if photo_add is -1:
@@ -175,7 +174,8 @@ def settings():
 def home():
     adminprofile = mongodb.admin_collection.find_one({'username': session['admin']})
     door_activity = mongodb.door_collection.find({'admin': session['admin']})
-    return render_template('home.html', adminprofile=adminprofile, door_activity=door_activity)
+    device = mongodb.device_collection.find_one({'admin': session['admin']})
+    return render_template('home.html', adminprofile=adminprofile, door_activity=door_activity, device=device)
 
 
 @app.route('/users/<user>', methods=['GET', 'POST'])
@@ -187,7 +187,7 @@ def usermodel(user):
     photoform = forms.PhotoForm()
     if photoform.validate_on_submit():
         photo_simplename = "user_" + user + "_" + secure_filename(photoform.photo.data.filename)
-        photo_filepath = "static/" + photo_simplename
+        photo_filepath = "static/" + "user_photos/" + photo_simplename
 
         photo_add = mongodb.add_photo("user", user, photo_filepath, photo_simplename)
         if photo_add is -1:
@@ -212,7 +212,7 @@ def guestmodel(guest):
     photoform = forms.PhotoForm()
     if photoform.validate_on_submit():
         photo_simplename = "guest_" + guest + "_" + secure_filename(photoform.photo.data.filename)
-        photo_filepath = "static/" + photo_simplename
+        photo_filepath = "static/" + "guest_photos/" + photo_simplename
 
         photo_add = mongodb.add_photo("guest", guest, photo_filepath, photo_simplename)
         if photo_add is -1:
@@ -289,7 +289,7 @@ def api_newadmin(key):
     username = request.form['username']
     password = request.form['password']
     full_name = request.form['full_name']
-    deviceid = request.form['deviceid']
+    device_id = request.form['device_id']
     admin_photo = request.files['admin_photo']
 
     if mongodb.device_available(deviceid) is False:
@@ -299,11 +299,11 @@ def api_newadmin(key):
         return jsonify(result="failure", details="given username not available")
 
     photo_simplename = "admin_" + username + "_" + secure_filename(admin_photo.filename)
-    photo_filepath = "static/" + photo_simplename
+    photo_filepath = "static/" + "admin_photos/" + photo_simplename
 
     mongodb.add_photo("admin", username, photo_filepath, photo_simplename)
-    mongodb.add_admin(full_name, username, password, deviceid)
-    mongodb.claim_device(deviceid, username)
+    mongodb.add_admin(full_name, username, password, device_id)
+    mongodb.claim_device(device_id, username)
     admin_photo.save(photo_filepath)
 
     return jsonify(result="success")
@@ -348,7 +348,9 @@ def api_userlogin(key):
     for photo in photos:
         photos_list.append(photo)
 
-    return jsonify(result="success", profile=profile, photos=photos_list)
+    admin = mongodb.admin_collection.find_one({'username': profile.get('admin_username')})
+
+    return jsonify(result="success", profile=profile, photos=photos_list, device=admin.get('device_id'))
 
 
 @app.route('/api/<key>/<admin>/users', methods=['GET', 'POST'])
@@ -399,7 +401,7 @@ def api_addphoto(key):
 
     photo = request.files['photo']
     photo_simplename = profile_type + "_" + profile_name + "_" + secure_filename(photo.filename)
-    photo_filepath = "static/" + photo_simplename
+    photo_filepath = "static/" + profile_type + "_photos/" + photo_simplename
 
     add_photo = mongodb.add_photo(profile_type, profile_name, photo_filepath, photo_simplename)
     if add_photo is -1:
@@ -440,7 +442,7 @@ def api_adduser(key):
 
     user_photo = request.files['user_photo']
     photo_simplename = "user_" + username + "_" + secure_filename(user_photo.filename)
-    photo_filepath = "static/" + photo_simplename
+    photo_filepath = "static/" + "user_photos/" + photo_simplename
 
     mongodb.add_photo("user", username, photo_filepath, photo_simplename)
     mongodb.add_user(admin_username, admin_name, full_name, username, password)
@@ -464,7 +466,7 @@ def api_addguest(key):
 
     guest_photo = request.files['guest_photo']
     photo_simplename = "guest_" + full_name + "_" + secure_filename(guest_photo.filename)
-    photo_filepath = "static/" + photo_simplename
+    photo_filepath = "static/" + "guest_photos/" + photo_simplename
 
     mongodb.add_photo("guest", full_name, photo_filepath, photo_simplename)
     mongodb.add_guest(admin_username, admin_name, full_name)
@@ -498,20 +500,73 @@ def api_deleteguest(key):
 
 
 # --------------------------------------------------------------------------------------------
-#                                  Arduino On-Door Unit API
+#                                     Door Unit API
 # --------------------------------------------------------------------------------------------
 
-@app.route('/api/<key>/toggledoor', methods=['GET', 'POST'])
-def toggledoor(key):
+@app.route('/api/<key>/toggledoorstatus', methods=['GET', 'POST'])
+def api_toggledoorstatus(key):
     if key != API_KEY:
         return api_log_wrong_key()
 
-    # - get request information including given photo
-    # - save photo & do facial recognition
+    device_id = request.form['device_id']
+    status = request.form['status']
+
+    mongodb.update_device_status(device_id, status)
+    return jsonify(result="success")
+
+
+@app.route('/api/<key>/updatedoorbattery', methods=['GET', 'POST'])
+def api_updatedoorbattery(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
+
+    device_id = request.form['device_id']
+    battery = request.form['battery']
+
+    mongodb.update_device_battery(device_id, battery)
+    return jsonify(result="success")
+
+
+@app.route('/api/<key>/toggledoor', methods=['GET', 'POST'])
+def api_toggledoor(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
+
+    # gather request information
+    admin = request.form['admin']
+    profile_type = request.form['profile_type']
+    profile_name = request.form['profile_name']
+    device_id = request.form['device_id']
+    toggle_photo = request.files['toggle_photo']
+
+    # save toggle photo
+    photo_simplename = "toggle_" + profile_type + "_" + profile_name + "_" + secure_filename(toggle_photo.filename)
+    photo_filepath = "static/" + "toggle_photos/" + photo_simplename
+    toggle_photo.save(photo_filepath)
+
+    # add toggle activity
+    mongodb.add_toggle_activity(profile_type, profile_name, photo_simplename, photo_filepath)
+
+    # do facial recognition
+    access = facialrecognition()
+
+    # delete toggle activity (depending on our system design)
+    mongodb.delete_toggle_activity(photo_simplename)
+
     # - create door activity record and save
+    mongodb.add_door_activity(admin, profile_type, profile_name, photo_simplename, access)
+
+    # - change device status
+    status = "locked"
+    if access:
+        status = "unlocked"
+    mongodb.update_device_status(device_id, status)
 
     return jsonify(result="success")
 
+
+def facialrecognition():
+    return True
 
 if __name__ == '__main__':
     app.run(debug=True)

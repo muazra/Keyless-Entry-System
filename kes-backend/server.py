@@ -1,10 +1,12 @@
 __author__ = 'Muaz'
 
 # imports
-from flask import Flask, render_template, redirect, url_for, flash, session, request, jsonify
+from flask import Flask, render_template, redirect, url_for, flash, session, request
 from flask.ext.bootstrap import Bootstrap
 from werkzeug.utils import secure_filename
 from db import MongoDB
+from bson import json_util
+from tools import jsonify
 import forms
 import os
 
@@ -128,7 +130,7 @@ def guests():
             flash("Guest already exists. Please try again.")
             return redirect(url_for('guests'))
 
-        photo_simplename = "guest" + form.name.data + "_" + secure_filename(form.photo.data.filename)
+        photo_simplename = "guest_" + form.name.data + "_" + secure_filename(form.photo.data.filename)
         photo_filepath = "static/" + photo_simplename
 
         photo_add = mongodb.add_photo("guest", form.name.data, photo_filepath, photo_simplename)
@@ -226,7 +228,7 @@ def guestmodel(guest):
     return render_template('guest.html', photoform=photoform, guestprofile=guestprofile, guestphotos=photos)
 
 
-@app.route('users/<username>/remove', methods=['GET', 'POST'])
+@app.route('/users/<username>/remove', methods=['GET', 'POST'])
 def removeuser(username):
     if 'admin' not in session:
         return redirect(url_for('login'))
@@ -237,7 +239,7 @@ def removeuser(username):
     return redirect(url_for('home'))
 
 
-@app.route('guests/<guestname>/remove', methods=['GET', 'POST'])
+@app.route('/guests/<guestname>/remove', methods=['GET', 'POST'])
 def removeguest(guestname):
     if 'admin' not in session:
         return redirect(url_for('login'))
@@ -261,46 +263,104 @@ def removephoto(photosimplename):
 #                                  Mobile Application API
 # --------------------------------------------------------------------------------------------
 
+
+def api_log_welcome():
+    return jsonify(result="Welcome to the official API of Project KES")
+
+
+def api_log_wrong_key():
+    return jsonify(result="failure", details="wrong api_key")
+
+
+def api_log_wrong_credentials():
+    return jsonify(result="failure", details="login credentials not accurate")
+
+
+@app.route('/api', methods=['GET'])
+def api_home():
+    return api_log_welcome()
+
+
+@app.route('/api/<key>/newadmin', methods=['GET', 'POST'])
+def api_newadmin(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
+
+    username = request.form['username']
+    password = request.form['password']
+    full_name = request.form['full_name']
+    deviceid = request.form['deviceid']
+    admin_photo = request.files['admin_photo']
+
+    if mongodb.device_available(deviceid) is False:
+        return jsonify(result="failure", details="given device not available")
+
+    if mongodb.admin_exist(username) is True:
+        return jsonify(result="failure", details="given username not available")
+
+    photo_simplename = "admin_" + username + "_" + secure_filename(admin_photo.filename)
+    photo_filepath = "static/" + photo_simplename
+
+    mongodb.add_photo("admin", username, photo_filepath, photo_simplename)
+    mongodb.add_admin(full_name, username, password, deviceid)
+    mongodb.claim_device(deviceid, username)
+    admin_photo.save(photo_filepath)
+
+    return jsonify(result="success")
+
+
 @app.route('/api/<key>/admin/login', methods=['GET', 'POST'])
-def adminlogin(key):
-    if key is not API_KEY:
-        return jsonify(result="failure", details="wrong api_key")
+def api_adminlogin(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
 
     username = request.form['username']
     password = request.form['password']
 
     access = mongodb.admin_allow_login(username, password)
     if access is False:
-        return jsonify(result="failure")
+        return api_log_wrong_credentials()
 
     profile = mongodb.admin_collection.find_one({'username': username, 'password': password})
     photos = mongodb.photo_collection.find({'profile_type': "admin", 'profile_name': username})
-    return jsonify(result="success", adminprofile=profile, adminphotos=photos)
+    photos_list = []
+    for photo in photos:
+        photos_list.append(photo)
+
+    return jsonify(result="success", profile=profile, photos=photos_list)
 
 
 @app.route('/api/<key>/user/login', methods=['GET', 'POST'])
-def userlogin(key):
-    if key is not API_KEY:
-        return jsonify(result="failure", details="wrong api_key")
+def api_userlogin(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
 
     username = request.form['username']
     password = request.form['password']
 
     access = mongodb.user_allow_login(username, password)
     if access is False:
-        return jsonify(result="failure")
+        return api_log_wrong_credentials()
 
     profile = mongodb.user_collection.find_one({'username': username, 'password': password})
     photos = mongodb.photo_collection.find({'profile_type': "user", 'profile_name': username})
-    return jsonify(result="success", userprofile=profile, userphotos=photos)
+    photos_list = []
+    for photo in photos:
+        photos_list.append(photo)
+
+    return jsonify(result="success", profile=profile, photos=photos_list)
 
 
-@app.route('/api/<key>/<admin>/users', methods=['GET'])
-def getusers(key, admin):
-    if key is not API_KEY:
-        return jsonify(result="failure", details="wrong api_key")
+@app.route('/api/<key>/<admin>/users', methods=['GET', 'POST'])
+def api_getusers(key, admin):
+    if key != API_KEY:
+        return api_log_wrong_key()
 
-    users_list = mongodb.user_collection.find({'admin_username': admin})
+    users_query = mongodb.user_collection.find({'admin_username': admin})
+    users_list = []
+    for user in users_query:
+        users_list.append(user)
+
     photos_list = []
     for user in users_list:
         photos = mongodb.photo_collection.find({'profile_type': "user", 'profile_name': user.get('username')})
@@ -310,12 +370,16 @@ def getusers(key, admin):
     return jsonify(result="success", users=users_list, photos=photos_list)
 
 
-@app.route('/api/<key>/<admin>/guests', methods=['GET'])
-def getguests(key, admin):
-    if key is not API_KEY:
-        return jsonify(result="failure", details="wrong api_key")
+@app.route('/api/<key>/<admin>/guests', methods=['GET', 'POST'])
+def api_getguests(key, admin):
+    if key != API_KEY:
+        return api_log_wrong_key()
 
-    guests_list = mongodb.guest_collection.find({'admin_username': admin})
+    guests_query = mongodb.guest_collection.find({'admin_username': admin})
+    guests_list = []
+    for guest in guests_query:
+        guests_list.append(guest)
+
     photos_list = []
     for guest in guests_list:
         photos = mongodb.photo_collection.find({'profile_type': "guest", 'profile_name': guest.get('full_name')})
@@ -325,118 +389,108 @@ def getguests(key, admin):
     return jsonify(result="success", guests=guests_list, photos=photos_list)
 
 
-@app.route('api/<key>/photo/add', methods=['GET', 'POST'])
-def addphoto(key):
-    if key is not API_KEY:
-        return jsonify(result="failure", details="wrong api_key")
+@app.route('/api/<key>/photo/add', methods=['GET', 'POST'])
+def api_addphoto(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
 
     profile_type = request.form['profile_type']
     profile_name = request.form['profile_name']
 
     photo = request.files['photo']
-    photo_simplename = photo.filename
+    photo_simplename = profile_type + "_" + profile_name + "_" + secure_filename(photo.filename)
     photo_filepath = "static/" + photo_simplename
 
     add_photo = mongodb.add_photo(profile_type, profile_name, photo_filepath, photo_simplename)
     if add_photo is -1:
-        return jsonify(result="failure - choose photo with unique file name")
+        return jsonify(result="failure", details="choose photo with unique file name")
 
     photo.save(photo_filepath)
-    return jsonify(result="success")
+    return jsonify(result="success", details="photo add successful")
 
 
-@app.route('api/<key>/photo/remove', methods=['GET', 'POST'])
-def removephoto(key):
-    if key is not API_KEY:
-        return jsonify(result="failure", details="wrong api_key")
+@app.route('/api/<key>/photo/remove', methods=['GET', 'POST'])
+def api_removephoto(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
 
     photo_simplename = request.form['photo_simplename']
 
     delete_photo = mongodb.delete_one_photo(photo_simplename, os)
     if delete_photo is -1:
-        return jsonify(result="failure - given photo with photo_simplename does not exist")
+        return jsonify(result="failure", details="given photo with photo_simplename does not exist")
 
-    return jsonify(result="success")
+    return jsonify(result="success", details="photo delete successful")
 
 
-@app.route('api/<key>/user/add', methods=['GET', 'POST'])
-def adduser(key):
-    if key is not API_KEY:
-        return jsonify(result="failure", details="wrong api_key")
+@app.route('/api/<key>/user/add', methods=['GET', 'POST'])
+def api_adduser(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
 
-    userprofile = request.get_json(force=True)
-    username = userprofile.get('username')
-    password = userprofile.get('password')
-    full_name = userprofile.get('full_name')
-    admin_username = userprofile.get('admin_username')
-    admin_name = userprofile.get('admin_name')
+    username = request.form['username']
+    password = request.form['password']
+    full_name = request.form['full_name']
+    admin_username = request.form['admin_username']
+    admin_name = request.form['admin_name']
 
     user_exist = mongodb.user_exist(username)
     if user_exist is True:
-        return jsonify(result="failure - user already exists")
-
-    mongodb.add_user(admin_username, admin_name, full_name, username, password)
+        return jsonify(result="failure", details="user already exists")
 
     user_photo = request.files['user_photo']
-    photo_simplename = "user_" + username + "_" + secure_filename(user_photo)
+    photo_simplename = "user_" + username + "_" + secure_filename(user_photo.filename)
     photo_filepath = "static/" + photo_simplename
 
-    photo_exist = mongodb.add_photo("user", username, photo_filepath, photo_simplename)
-    if photo_exist is -1:
-        return jsonify(result="failure - given photo with photo_simplename already exists")
-
+    mongodb.add_photo("user", username, photo_filepath, photo_simplename)
+    mongodb.add_user(admin_username, admin_name, full_name, username, password)
     user_photo.save(photo_filepath)
+
     return jsonify(result="success")
 
 
-@app.route('api/<key>/guest/add', methods=['GET', 'POST'])
-def addguest(key):
-    if key is not API_KEY:
-        return jsonify(result="failure", details="wrong api_key")
+@app.route('/api/<key>/guest/add', methods=['GET', 'POST'])
+def api_addguest(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
 
-    guestprofile = request.get_json(force=True)
-    full_name = guestprofile.get('full_name')
-    admin_username = guestprofile.get('admin_username')
-    admin_name = guestprofile.get('admin_name')
+    full_name = request.form['full_name']
+    admin_username = request.form['admin_username']
+    admin_name = request.form['admin_name']
 
     guest_exist = mongodb.guest_exist(full_name)
     if guest_exist is True:
-        return jsonify(result="failure - guest already exists")
-
-    mongodb.add_guest(admin_username, admin_name, full_name)
+        return jsonify(result="failure", details="guest already exists")
 
     guest_photo = request.files['guest_photo']
-    photo_simplename = "guest_" + full_name + "_" + secure_filename(guest_photo)
+    photo_simplename = "guest_" + full_name + "_" + secure_filename(guest_photo.filename)
     photo_filepath = "static/" + photo_simplename
 
-    photo_exist = mongodb.add_photo("guest", full_name, photo_filepath, photo_simplename)
-    if photo_exist is -1:
-        return jsonify(result="failure - given photo with photo_simplename already exists")
-
+    mongodb.add_photo("guest", full_name, photo_filepath, photo_simplename)
+    mongodb.add_guest(admin_username, admin_name, full_name)
     guest_photo.save(photo_filepath)
+
     return jsonify(result="success")
 
 
-@app.route('api/<key>/user/delete')
-def deleteuser(key):
-    if key is not API_KEY:
-        return jsonify(result="failure", details="wrong api_key")
+@app.route('/api/<key>/user/delete', methods=['GET', 'POST'])
+def api_deleteuser(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
 
-    userprofile = request.get_json(force=True)
-    username = userprofile.get('username')
+    username = request.form['username']
 
     mongodb.delete_user(username)
     mongodb.delete_all_photos("user", username, os)
     return jsonify(result="success")
 
 
-@app.route('api/<key>/guest/delete')
-def deleteguest(key):
-    if key is not API_KEY:
-        return jsonify(result="failure", details="wrong api_key")
+@app.route('/api/<key>/guest/delete', methods=['GET', 'POST'])
+def api_deleteguest(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
 
-    guestprofile = request.get_json(force=True)
-    guestname = guestprofile.get('full_name')
+    guestname = request.form['full_name']
 
     mongodb.delete_guest(guestname)
     mongodb.delete_all_photos("guest", guestname, os)
@@ -449,15 +503,10 @@ def deleteguest(key):
 
 @app.route('/api/<key>/toggledoor', methods=['GET', 'POST'])
 def toggledoor(key):
-    if key is not API_KEY:
-        return jsonify(result="failure", details="wrong api_key")
+    if key != API_KEY:
+        return api_log_wrong_key()
 
-    toggleprofile = request.get_json(force=True)
-
-    profile_type = toggleprofile.get('profile_type')
-    profile_name = toggleprofile.get('name')
-    photo = request.files['toggle_photo']
-
+    # - get request information including given photo
     # - save photo & do facial recognition
     # - create door activity record and save
 

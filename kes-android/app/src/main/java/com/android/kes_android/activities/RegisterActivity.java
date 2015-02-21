@@ -1,9 +1,11 @@
-package com.android.kes_android;
+package com.android.kes_android.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.android.kes_android.R;
 
 public class RegisterActivity extends Activity {
 

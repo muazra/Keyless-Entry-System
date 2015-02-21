@@ -29,7 +29,7 @@
     {{ wtf.quick_form(photoform) }}
 </form>
 
-<a href="{ {url_for('removeguest', guestname=guestprofile.get('full_name')) }}" class="button-delete">Delete Guest</a>
+<a href="{{url_for('removeguest', guestname = guestprofile.get('full_name')) }}" class="button-delete">Delete Guest</a>
 
 <div class="back">
 <a href="{{url_for('guests')}}">Back to Guests Panel</a>

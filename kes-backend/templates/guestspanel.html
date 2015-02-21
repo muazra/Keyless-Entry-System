@@ -10,7 +10,7 @@
 <div class="guests-list">
     <h5 class="guests">Current List of Guests</h5>
     {% for guest in guests %}
-    <li><a href="{{url_for('guestmodel', guest = guest.get('full_name')) }} ">{{guest.get('full_name')}}</a></li>
+    <li> <a href="{{url_for('guestmodel', guest = guest.get('full_name')) }} ">{{guest.get('full_name')}}</a> </li>
     {% endfor %}
 </div>
 

@@ -3,11 +3,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingRight="15dp"
-    android:paddingLeft="15dp"
-    android:background="#C0C0C0">
+    android:paddingLeft="15dp">
 
     <TextView
-        android:text="Register New Account"
+        android:text="Register New Admin Account"
         android:textSize="20sp"
         android:textAllCaps="true"
         android:textStyle="bold"

@@ -1,0 +1,56 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:paddingRight="15dp"
+              android:paddingLeft="15dp">
+
+    <TextView
+        android:text="Register New Guest Account"
+        android:textSize="20sp"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingTop="20dp"
+        android:paddingBottom="15dp"/>
+
+    <EditText
+        android:id="@+id/newguest_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Name"
+        android:layout_gravity="center"/>
+
+    <ImageView
+        android:id="@+id/newguest_image"
+        android:layout_margin="10dp"
+        android:background="@android:color/darker_gray"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="300dp"
+        android:layout_height="260dp"/>
+
+    <Button
+        android:id="@+id/newguest_addphoto_button"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@android:color/holo_green_dark"
+        android:paddingLeft="20dp"
+        android:paddingEnd="20dp"
+        android:textSize="15sp"
+        android:text="Add Photo"/>
+
+    <Button
+        android:id="@+id/newguest_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:padding="15dp"
+        android:background="@android:color/holo_blue_dark"
+        android:text="Submit New Guest"
+        android:textStyle="bold"/>
+
+</LinearLayout>

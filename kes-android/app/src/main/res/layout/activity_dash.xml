@@ -2,8 +2,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingRight="15dp"
-    android:paddingLeft="15dp"
-    android:background="#C0C0C0">
+    android:paddingLeft="15dp">
 
     <TextView
         android:text="Recent Door Activity"
@@ -33,16 +32,16 @@
         android:text="Current Door Status"/>
 
     <TextView
-        android:id="@+id/dash_status"
+        android:id="@+id/dash_door_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textSize="25sp"
         android:layout_marginTop="5dp"
-        android:textColor="@android:color/holo_green_dark"
-        android:text="LOCKED"/>
+        android:textColor="@android:color/holo_green_dark"/>
 
     <TextView
+        android:id="@+id/dash_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -52,23 +51,37 @@
         android:text="Current Door Battery"/>
 
     <TextView
-        android:id="@+id/dash_battery"
+        android:id="@+id/dash_door_battery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
         android:textSize="25sp"
-        android:textColor="@android:color/holo_green_dark"
-        android:text="100%"/>
+        android:textColor="@android:color/holo_green_dark"/>
 
     <Button
-        android:id="@+id/dash_toggle"
+        android:id="@+id/dash_toggle_button"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_gravity="center"
         android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:background="@android:color/holo_blue_dark"
         android:text="Toggle Door"
+        android:textAllCaps="true"
+        android:textStyle="bold"/>
+
+    <Button
+        android:id="@+id/dash_lock_door"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:background="@android:color/holo_red_dark"
+        android:text="Lock Door"
         android:textAllCaps="true"
         android:textStyle="bold"/>
 </LinearLayout>

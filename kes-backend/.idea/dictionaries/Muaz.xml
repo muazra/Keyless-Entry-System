@@ -13,9 +13,12 @@
       <w>adminsettings</w>
       <w>adminusers</w>
       <w>arduino</w>
+      <w>dashinfo</w>
       <w>deleteguest</w>
       <w>deleteuser</w>
       <w>deviceid</w>
+      <w>dooractivities</w>
+      <w>dooractivity</w>
       <w>encodedstring</w>
       <w>endfor</w>
       <w>facialrecognition</w>
@@ -40,6 +43,7 @@
       <w>removeuser</w>
       <w>simplename</w>
       <w>simplepath</w>
+      <w>toggleactivities</w>
       <w>toggledoor</w>
       <w>toggledoorimage</w>
       <w>toggledoorstatus</w>

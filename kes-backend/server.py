@@ -292,7 +292,7 @@ def api_newadmin(key):
     device_id = request.form['device_id']
     admin_photo = request.files['admin_photo']
 
-    if mongodb.device_available(deviceid) is False:
+    if mongodb.device_available(device_id) is False:
         return jsonify(result="failure", details="given device not available")
 
     if mongodb.admin_exist(username) is True:
@@ -322,7 +322,62 @@ def api_adminlogin(key):
         return api_log_wrong_credentials()
 
     profile = mongodb.admin_collection.find_one({'username': username, 'password': password})
+    device = mongodb.device_collection.find_one({'admin': username})
+
+    door_activity = mongodb.door_collection.find({'admin': username})
+    door_list = []
+    for door in door_activity:
+        door_list.append(door)
+
     photos = mongodb.photo_collection.find({'profile_type': "admin", 'profile_name': username})
+    photos_list = []
+    for photo in photos:
+        photos_list.append(photo)
+
+    return jsonify(result="success", profile=profile, device=device, photos=photos_list, door=door_list)
+
+
+@app.route('/api/<key>/getadmin', methods=['GET', 'POST'])
+def api_getadmin(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
+
+    admin = request.form['admin']
+
+    profile = mongodb.admin_collection.find_one({'username': admin})
+    photos = mongodb.photo_collection.find({'profile_type': "admin", 'profile_name': admin})
+    photos_list = []
+    for photo in photos:
+        photos_list.append(photo)
+
+    return jsonify(result="success", profile=profile, photos=photos_list)
+
+
+@app.route('/api/<key>/getuser', methods=['GET', 'POST'])
+def api_getuser(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
+
+    user = request.form['user']
+
+    profile = mongodb.user_collection.find_one({'username': user})
+    photos = mongodb.photo_collection.find({'profile_type': "user", 'profile_name': user})
+    photos_list = []
+    for photo in photos:
+        photos_list.append(photo)
+
+    return jsonify(result="success", profile=profile, photos=photos_list)
+
+
+@app.route('/api/<key>/getguest', methods=['GET', 'POST'])
+def api_getguest(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
+
+    guest = request.form['guest']
+
+    profile = mongodb.guest_collection.find_one({'full_name': guest})
+    photos = mongodb.photo_collection.find({'profile_type': "guest", 'profile_name': guest})
     photos_list = []
     for photo in photos:
         photos_list.append(photo)
@@ -348,15 +403,21 @@ def api_userlogin(key):
     for photo in photos:
         photos_list.append(photo)
 
-    admin = mongodb.admin_collection.find_one({'username': profile.get('admin_username')})
+    device = mongodb.device_collection.find_one({'admin': profile.get('admin_username')})
+    door_activity = mongodb.door_collection.find({'admin': profile.get('admin_username')})
+    door_list = []
+    for door in door_activity:
+        door_list.append(door)
 
-    return jsonify(result="success", profile=profile, photos=photos_list, device=admin.get('device_id'))
+    return jsonify(result="success", profile=profile, device=device, photos=photos_list, door=door_list)
 
 
-@app.route('/api/<key>/<admin>/users', methods=['GET', 'POST'])
-def api_getusers(key, admin):
+@app.route('/api/<key>/users', methods=['GET', 'POST'])
+def api_getusers(key):
     if key != API_KEY:
         return api_log_wrong_key()
+
+    admin = request.form['admin']
 
     users_query = mongodb.user_collection.find({'admin_username': admin})
     users_list = []
@@ -372,10 +433,12 @@ def api_getusers(key, admin):
     return jsonify(result="success", users=users_list, photos=photos_list)
 
 
-@app.route('/api/<key>/<admin>/guests', methods=['GET', 'POST'])
-def api_getguests(key, admin):
+@app.route('/api/<key>/guests', methods=['GET', 'POST'])
+def api_getguests(key):
     if key != API_KEY:
         return api_log_wrong_key()
+
+    admin = request.form['admin']
 
     guests_query = mongodb.guest_collection.find({'admin_username': admin})
     guests_list = []
@@ -434,7 +497,9 @@ def api_adduser(key):
     password = request.form['password']
     full_name = request.form['full_name']
     admin_username = request.form['admin_username']
-    admin_name = request.form['admin_name']
+
+    admin = mongodb.admin_collection.find_one({'username': admin_username})
+    admin_name = admin.get("full_name")
 
     user_exist = mongodb.user_exist(username)
     if user_exist is True:
@@ -458,7 +523,9 @@ def api_addguest(key):
 
     full_name = request.form['full_name']
     admin_username = request.form['admin_username']
-    admin_name = request.form['admin_name']
+
+    admin = mongodb.admin_collection.find_one({'username': admin_username})
+    admin_name = admin.get("full_name")
 
     guest_exist = mongodb.guest_exist(full_name)
     if guest_exist is True:
@@ -499,6 +566,24 @@ def api_deleteguest(key):
     return jsonify(result="success")
 
 
+@app.route('/api/<key>/dashinfo', methods=['GET', 'POST'])
+def api_dashinfo(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
+
+    admin = request.form['admin']
+    profile = mongodb.admin_collection.find_one({'username': admin})
+
+    device = mongodb.device_collection.find_one({'admin': admin})
+
+    door_activity = mongodb.door_collection.find({'admin': admin})
+    door_list = []
+    for door in door_activity:
+        door_list.append(door)
+
+    return jsonify(result="success", profile=profile, device=device, door=door_list)
+
+
 # --------------------------------------------------------------------------------------------
 #                                     Door Unit API
 # --------------------------------------------------------------------------------------------
@@ -525,6 +610,24 @@ def api_updatedoorbattery(key):
 
     mongodb.update_device_battery(device_id, battery)
     return jsonify(result="success")
+
+
+@app.route('/api/<key>/dooractivity', methods=['GET', 'POST'])
+def api_dooractivity(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
+
+    admin = request.form['admin']
+
+    if mongodb.admin_exist(admin) is False:
+        return jsonify(result="failure", details="given admin does not exist")
+
+    door_activities = mongodb.door_collection.find({'admin': admin})
+    door_activity_list = []
+    for activity in door_activities:
+        door_activity_list.append(activity)
+
+    return jsonify(result="success", door_activities=door_activity_list)
 
 
 @app.route('/api/<key>/toggledoor', methods=['GET', 'POST'])

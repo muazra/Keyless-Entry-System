@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.android.kes_android" >
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-feature android:name="android.hardware.camera"
                   android:required="true" />
 
@@ -11,18 +13,43 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UsersListActivity" />
-        <activity android:name=".GuestsListActivity" />
-        <activity android:name=".SettingsActivity" />
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".DashActivity" />
+        <activity android:name=".activities.UsersListActivity"
+                  android:label="Users"/>
+
+        <activity android:name=".activities.GuestsListActivity"
+                  android:label="Guests"/>
+
+        <activity android:name=".activities.SettingsActivity"
+                  android:label="Settings"/>
+
+        <activity android:name=".activities.RegisterActivity"
+                  android:label="Register"/>
+
+        <activity android:name=".activities.DashActivity"
+                  android:label="Dashboard"/>
+
+        <activity android:name=".activities.DoorActivity"
+                  android:label="Door Activity"/>
+
+        <activity android:name=".activities.SingleUserActivity"
+                  android:label="User"/>
+
+        <activity android:name=".activities.SingleGuestActivity"
+                  android:label="Guest"/>
+
+        <activity android:name=".activities.NewUserActivity"
+                  android:label="New User"/>
+
+        <activity android:name=".activities.NewGuestActivity"
+                  android:label="New Guest"/>
+
     </application>
 
 </manifest>

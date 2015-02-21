@@ -101,7 +101,7 @@ class MongoDB:
         return True
 
     def delete_guest(self, guestname):
-        guest = self.user_collection.find_one({'full_name': guestname})
+        guest = self.guest_collection.find_one({'full_name': guestname})
         self.guest_collection.remove(guest)
 
     # Photo Collection

@@ -5,7 +5,6 @@
     android:orientation="vertical"
     android:paddingRight="15dp"
     android:paddingLeft="15dp"
-    android:background="#C0C0C0"
     tools:context=".LoginActivity">
 
     <TextView
@@ -56,35 +55,27 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:layout_marginTop="10dp"
             android:layout_weight="1">
+
             <Button
-                android:id="@+id/login_sign_in"
-                android:layout_width="150dp"
+                android:id="@+id/login_sign_in_admin"
+                android:layout_width="170dp"
                 android:layout_height="wrap_content"
-                android:text="@string/sign_in"
+                android:text="Sign In Admin"
                 android:textStyle="bold"
-                android:layout_marginTop="10dp"
                 android:layout_gravity="end"/>
 
             <Button
-                android:id="@+id/login_register"
-                android:layout_width="150dp"
+                android:id="@+id/login_sign_in_user"
+                android:layout_width="170dp"
                 android:layout_height="wrap_content"
-                android:text="@string/register"
+                android:text="Sign In User"
                 android:textStyle="bold"
                 android:layout_gravity="end"/>
 
         </LinearLayout>
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/login_guest"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Guest"
-        android:textStyle="bold"
-        android:layout_gravity="end"/>
 
 </LinearLayout>

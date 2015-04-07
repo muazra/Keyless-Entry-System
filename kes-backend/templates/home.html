@@ -9,14 +9,15 @@
 </div>
 
 <div class="door-activity">
-    <h5 class="home">Recent Door Activity</h5>
+    <h5 class="home">Recent Door Activity <br> (0 = access denied, 1 = access granted)</h5>
     {% for activity in door_activity %}
-    <li> <a href="/static/toggle_photos/{{ activity.get('photo_simplename') }} ">{{activity.get("_id")}}</a> </li>
+    <li> <a href="/static/original/toggle_photos/{{ activity.get('photo_simplename') }} ">
+        FROM: {{activity.get("username")}} ----- RESULT: {{activity.get("granted")}}</a> </li>
     {% endfor %}
 </div>
 
 <div class="door-current-status">
-    <h5>Current Door Status - {{device.get('status')}}</h5>
+    <h5>Current Door Status - {{status}}</h5>
 </div>
 
 <div class="door-current-power">

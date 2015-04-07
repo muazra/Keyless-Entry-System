@@ -13,6 +13,7 @@
       <w>adminsettings</w>
       <w>adminusers</w>
       <w>arduino</w>
+      <w>createadminaccount</w>
       <w>dashinfo</w>
       <w>deleteguest</w>
       <w>deleteuser</w>
@@ -21,16 +22,26 @@
       <w>dooractivity</w>
       <w>encodedstring</w>
       <w>endfor</w>
+      <w>endif</w>
       <w>facialrecognition</w>
       <w>filepath</w>
+      <w>getadmin</w>
       <w>getadmins</w>
+      <w>getdooractivities</w>
+      <w>getdoorstatus</w>
+      <w>getdoorstatusmobile</w>
+      <w>getguest</w>
       <w>getguests</w>
       <w>getusers</w>
+      <w>github</w>
       <w>guestlink</w>
       <w>guestmodel</w>
       <w>guestname</w>
       <w>guestphoto</w>
+      <w>guestphotos</w>
       <w>guestprofile</w>
+      <w>incrementcount</w>
+      <w>muaz</w>
       <w>multipart</w>
       <w>newadmin</w>
       <w>newuser</w>
@@ -38,6 +49,7 @@
       <w>photoform</w>
       <w>photolink</w>
       <w>photolist</w>
+      <w>photosimplename</w>
       <w>removeguest</w>
       <w>removephoto</w>
       <w>removeuser</w>
@@ -46,9 +58,11 @@
       <w>toggleactivities</w>
       <w>toggledoor</w>
       <w>toggledoorimage</w>
+      <w>toggledoormobile</w>
       <w>toggledoorstatus</w>
       <w>updateadmin</w>
       <w>updatedoorbattery</w>
+      <w>updatedoorstatus</w>
       <w>updateguest</w>
       <w>updateuser</w>
       <w>userguests</w>

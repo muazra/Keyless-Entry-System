@@ -19,7 +19,7 @@ class NewAdminForm(Form):
     deviceid = StringField('Device ID', validators=[DataRequired()])
     photo = FileField('Photo', validators=[
         FileRequired(),
-        FileAllowed(['jpg', 'png'], 'Images only!')
+        FileAllowed(['jpeg', 'jpg', 'png'], 'Images only! (jpeg, jpg, or png)')
     ])
     submit = SubmitField('Submit')
 
@@ -30,7 +30,7 @@ class NewUserForm(Form):
     password = PasswordField('Password', validators=[DataRequired()])
     photo = FileField('Photo', validators=[
         FileRequired(),
-        FileAllowed(['jpg', 'png'], 'Images only!')
+        FileAllowed(['jpeg', 'jpg', 'png'], 'Images only! (jpeg, jpg, or png)')
     ])
     submit = SubmitField('Submit')
 
@@ -39,7 +39,7 @@ class NewGuestForm(Form):
     name = StringField('Name', validators=[DataRequired()])
     photo = FileField('Photo', validators=[
         FileRequired(),
-        FileAllowed(['jpg', 'png'], 'Images only!')
+        FileAllowed(['jpeg', 'jpg', 'png'], 'Images only! (jpeg, jpg, or png)')
     ])
     submit = SubmitField('Submit')
 
@@ -47,6 +47,6 @@ class NewGuestForm(Form):
 class PhotoForm(Form):
     photo = FileField('Upload New Photo:', validators=[
         FileRequired(),
-        FileAllowed(['jpg', 'png'], 'Images only!')
+        FileAllowed(['jpeg', 'jpg', 'png'], 'Images only! (jpeg, jpg, or png)')
     ])
     submit = SubmitField('Submit')

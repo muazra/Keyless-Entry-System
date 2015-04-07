@@ -1,0 +1,18 @@
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/admin_photos/admin_muazra_JPEG_20150405_205524_251379256.jpg;0
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/user_photos/user_jhern_IMG_20150405_205655.jpg;1
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/admin_photos/admin_muazra_Photo_on_4-5-15_at_9.22_PM.jpg;0
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/user_photos/user_jhern_Photo_on_4-5-15_at_9.22_PM_2.jpg;1
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/admin_photos/admin_muazra_JPEG_20150405_214403_1967540544.jpg;0
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/user_photos/user_jhern_IMG_20150405_214443.jpg;1
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/admin_photos/admin_muazra_JPEG_20150405_215547_-544061206.jpg;0
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/user_photos/user_jhern_IMG_20150405_215612.jpg;1
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/guest_photos/guest_Nikki Fettig_Photo_on_4-5-15_at_9.27_PM.jpg;2
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/guest_photos/guest_Nikki Fettig_IMG_20150405_205743.jpg;2
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/guest_photos/guest_Nikki Fettig_IMG_20150405_171557.jpg;2
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/guest_photos/guest_Nikki Fettig_IMG_20150405_214521.jpg;2
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/admin_photos/admin_muazra_muaz_cam2.jpg;0
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/admin_photos/admin_muazra_muaz_cam.jpg;0
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/user_photos/user_jhern_jose_cam.jpg;1
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/user_photos/user_jhern_jose_cam2.jpg;1
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/guest_photos/guest_Nikki Fettig_nikki_cam.jpg;2
+/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/training/guest_photos/guest_Nikki Fettig_nikki_cam2.jpg;2

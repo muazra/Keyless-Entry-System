@@ -18,7 +18,7 @@
     <ul id="photolist">
     {% for photo in guestphotos %}
     <li>
-        <img src="/static/guest_photos/{{photo.get('photo_simplename')}}" alt="Guest Picture" style="width:200px;height:200px">
+        <img src="/static/original/guest_photos/{{photo.get('photo_simplename')}}" alt="Guest Picture" style="width:200px;height:200px">
         <a href= " {{ url_for('removephoto', photosimplename = photo.get('photo_simplename') ) }} " class="button-delete">Delete Photo</a>
     </li>
     {% endfor %}

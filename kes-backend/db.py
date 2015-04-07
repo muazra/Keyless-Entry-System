@@ -5,28 +5,31 @@ class MongoDB:
     client = MongoClient('localhost', 27017)
     db = client.db
 
+    # Collection Types
+
     device_collection = db.device_collection
-    device1 = {'device_id': "Device1ID",
-               'available': "true",
-               'admin': "n/a",
-               'status': "locked",
-               'battery': "100%"}
-    device_collection.insert(device1)
-
-    device2 = {'device_id': "Device2ID",
-               'available': "true",
-               'admin': "n/a",
-               'status': "locked",
-               'battery': "100%"}
-    device_collection.insert(device2)
-
     admin_collection = db.admin_collection
     user_collection = db.user_collection
     guest_collection = db.guest_collection
     photo_collection = db.photo_collection
-
     door_collection = db.door_collection
-    toggle_collection = db.toggle_collection
+
+    # Adding Devices
+
+    device1 = {'device_id': "Device1ID",
+               'available': "true",
+               'admin': "n/a",
+               'status': "0",               # 1 means locked
+               'battery': "100%"}
+
+    device2 = {'device_id': "Device2ID",
+               'available': "true",
+               'admin': "n/a",
+               'status': "0",
+               'battery': "100%"}
+
+    device_collection.insert(device1)
+    device_collection.insert(device2)
 
     # Device Collection
 
@@ -47,11 +50,11 @@ class MongoDB:
     # Admin Collection
 
     def add_admin(self, full_name, username, password, device_id):
-        username = {'full_name': full_name,
-                    'username': username,
-                    'password': password,
-                    'device_id': device_id}
-        self.admin_collection.insert(username)
+        admin = {'full_name': full_name,
+                 'username': username,
+                 'password': password,
+                 'device_id': device_id}
+        self.admin_collection.insert(admin)
 
     def admin_exist(self, username):
         if self.admin_collection.find_one({'username': username}) is None:
@@ -120,6 +123,15 @@ class MongoDB:
     def delete_all_photos(self, profile_type, username, os):
         photos = self.photo_collection.find({'profile_type': profile_type, 'profile_name': username})
         for photo in photos:
+            if profile_type == 'admin':
+                os.remove("static/training/admin_photos/" + photo.get("photo_simplename"))
+
+            if profile_type == 'user':
+                os.remove("static/training/user_photos/" + photo.get("photo_simplename"))
+
+            if profile_type == 'guest':
+                os.remove("static/training/guest_photos/" + photo.get("photo_simplename"))
+
             os.remove(photo.get("photo_filepath"))
             self.photo_collection.remove(photo)
 
@@ -128,28 +140,35 @@ class MongoDB:
         if photo is None:
             return -1
 
+        if photo.get("profile_type") == 'admin':
+            os.remove("static/training/admin_photos/" + photo_simplename)
+
+        if photo.get("profile_type") == 'user':
+            os.remove("static/training/user_photos/" + photo_simplename)
+
+        if photo.get("profile_type") == 'guest':
+            os.remove("static/training/guest_photos/" + photo_simplename)
+
         os.remove(photo.get("photo_filepath"))
         self.photo_collection.remove(photo)
 
-    # Door Toggling Activities
+    # Door Activity Collection
 
-    def add_toggle_activity(self, profile_type, profile_name, photo_simplename, photo_filepath):
-        toggle = {'profile_type': profile_type,
-                  'profile_name': profile_name,
-                  'photo_simplename': photo_simplename,
-                  'photo_filepath': photo_filepath}
-        self.toggle_collection.insert(toggle)
-
-    def delete_toggle_activity(self, photo_simplename):
-        self.toggle_collection.remove({'photo_simplename': photo_simplename})
-
-    def add_door_activity(self, admin, profile_type, username, photo_simplename, granted):
-        door = {'admin': admin,
+    def add_door_activity(self, admin_username, profile_type, username, photo_simplename, granted):
+        door = {'admin': admin_username,
                 'profile_type': profile_type,
                 'username': username,
                 'photo_simplename': photo_simplename,
                 'granted': granted}
         self.door_collection.insert(door)
+
+    def delete_door_collections(self, os):
+        doors = self.door_collection.find()
+        for door in doors:
+            os.remove("/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/static/original/toggle_photos/"
+                      + door.get("photo_simplename"))
+
+        self.door_collection.remove({})
 
     def __init__(self):
         return

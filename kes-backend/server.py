@@ -5,12 +5,17 @@ from flask import Flask, render_template, redirect, url_for, flash, session, req
 from flask.ext.bootstrap import Bootstrap
 from werkzeug.utils import secure_filename
 from db import MongoDB
-from tools import jsonify
+from tools import jsonify, create_csv
 import forms
 import os
+from subprocess import check_output, Popen
 
 # configurations
 API_KEY = "KES_MJN"
+PROJECT_DIRECTORY = "/Users/Muaz/Documents/Github_Projects/Project-KES/kes-backend/"
+DETECT_IMAGE_DIRECTORY = "/Users/Muaz/Desktop/DetectImage"
+MATCH_IMAGE_DIRECTORY = "/Users/Muaz/Desktop/MatchImage"
+CSV_PATH = PROJECT_DIRECTORY + "csv.txt"
 
 # launch
 app = Flask(__name__)
@@ -66,8 +71,10 @@ def newadmin():
             return redirect(url_for('newadmin'))
 
         photo_simplename = "admin_" + form.username.data + "_" + secure_filename(form.photo.data.filename)
-        photo_filepath = "static/" + "admin_photos/" + photo_simplename
+        photo_filepath = "static/original/admin_photos/" + photo_simplename
+
         form.photo.data.save(photo_filepath)
+        Popen(['./DetectImage', PROJECT_DIRECTORY + photo_filepath], cwd=DETECT_IMAGE_DIRECTORY)
 
         mongodb.add_admin(form.name.data, form.username.data, form.password.data, form.deviceid.data)
         photo_add = mongodb.add_photo("admin", form.username.data, photo_filepath, photo_simplename)
@@ -99,7 +106,7 @@ def users():
             return redirect(url_for('users'))
 
         photo_simplename = "user_" + form.username.data + "_" + secure_filename(form.photo.data.filename)
-        photo_filepath = "static/" + "user_photos/" + photo_simplename
+        photo_filepath = "static/original/user_photos/" + photo_simplename
 
         photo_add = mongodb.add_photo("user", form.username.data, photo_filepath, photo_simplename)
         if photo_add is -1:
@@ -107,6 +114,8 @@ def users():
             return redirect(url_for('users'))
 
         form.photo.data.save(photo_filepath)
+        Popen(['./DetectImage', PROJECT_DIRECTORY + photo_filepath], cwd=DETECT_IMAGE_DIRECTORY)
+
         mongodb.add_user(session['admin'], session['admin_name'], form.name.data,
                          form.username.data, form.password.data)
 
@@ -130,7 +139,7 @@ def guests():
             return redirect(url_for('guests'))
 
         photo_simplename = "guest_" + form.name.data + "_" + secure_filename(form.photo.data.filename)
-        photo_filepath = "static/" + "guest_photos/" + photo_simplename
+        photo_filepath = "static/original/guest_photos/" + photo_simplename
 
         photo_add = mongodb.add_photo("guest", form.name.data, photo_filepath, photo_simplename)
         if photo_add is -1:
@@ -138,6 +147,8 @@ def guests():
             return redirect(url_for('users'))
 
         form.photo.data.save(photo_filepath)
+        Popen(['./DetectImage', PROJECT_DIRECTORY + photo_filepath], cwd=DETECT_IMAGE_DIRECTORY)
+
         mongodb.add_guest(session['admin'], session['admin_name'], form.name.data)
 
         flash("Guest successfully added")
@@ -154,7 +165,7 @@ def settings():
     photoform = forms.PhotoForm()
     if photoform.validate_on_submit():
         photo_simplename = "admin_" + session['admin'] + "_" + secure_filename(photoform.photo.data.filename)
-        photo_filepath = "static/" + "admin_photos/" + photo_simplename
+        photo_filepath = "static/original/admin_photos/" + photo_simplename
 
         photo_add = mongodb.add_photo("admin", session['admin'], photo_filepath, photo_simplename)
         if photo_add is -1:
@@ -162,6 +173,7 @@ def settings():
             return redirect(url_for('settings'))
 
         photoform.photo.data.save(photo_filepath)
+        Popen(['./DetectImage', PROJECT_DIRECTORY + photo_filepath], cwd=DETECT_IMAGE_DIRECTORY)
         return redirect(url_for('settings'))
 
     adminprofile = mongodb.admin_collection.find_one({'username': session['admin']})
@@ -175,7 +187,11 @@ def home():
     adminprofile = mongodb.admin_collection.find_one({'username': session['admin']})
     door_activity = mongodb.door_collection.find({'admin': session['admin']})
     device = mongodb.device_collection.find_one({'admin': session['admin']})
-    return render_template('home.html', adminprofile=adminprofile, door_activity=door_activity, device=device)
+    status = "Locked"
+    if device.get("status") == "1":
+        status = "Unlocked"
+    return render_template('home.html', adminprofile=adminprofile, door_activity=door_activity,
+                           device=device, status=status)
 
 
 @app.route('/users/<user>', methods=['GET', 'POST'])
@@ -187,7 +203,7 @@ def usermodel(user):
     photoform = forms.PhotoForm()
     if photoform.validate_on_submit():
         photo_simplename = "user_" + user + "_" + secure_filename(photoform.photo.data.filename)
-        photo_filepath = "static/" + "user_photos/" + photo_simplename
+        photo_filepath = "static/original/user_photos/" + photo_simplename
 
         photo_add = mongodb.add_photo("user", user, photo_filepath, photo_simplename)
         if photo_add is -1:
@@ -195,6 +211,7 @@ def usermodel(user):
             return redirect(url_for('usermodel', user=user))
 
         photoform.photo.data.save(photo_filepath)
+        Popen(['./DetectImage', PROJECT_DIRECTORY + photo_filepath], cwd=DETECT_IMAGE_DIRECTORY)
         return redirect(url_for('usermodel', user=user))
 
     userprofile = mongodb.user_collection.find_one({'username': user})
@@ -212,7 +229,7 @@ def guestmodel(guest):
     photoform = forms.PhotoForm()
     if photoform.validate_on_submit():
         photo_simplename = "guest_" + guest + "_" + secure_filename(photoform.photo.data.filename)
-        photo_filepath = "static/" + "guest_photos/" + photo_simplename
+        photo_filepath = "static/original/guest_photos/" + photo_simplename
 
         photo_add = mongodb.add_photo("guest", guest, photo_filepath, photo_simplename)
         if photo_add is -1:
@@ -220,6 +237,7 @@ def guestmodel(guest):
             return redirect(url_for('guestmodel', guest=guest))
 
         photoform.photo.data.save(photo_filepath)
+        Popen(['./DetectImage', PROJECT_DIRECTORY + photo_filepath], cwd=DETECT_IMAGE_DIRECTORY)
         return redirect(url_for('guestmodel', guest=guest))
 
     guestprofile = mongodb.guest_collection.find_one({'full_name': guest})
@@ -263,7 +281,6 @@ def removephoto(photosimplename):
 #                                  Mobile Application API
 # --------------------------------------------------------------------------------------------
 
-
 def api_log_welcome():
     return jsonify(result="Welcome to the official API of Project KES")
 
@@ -299,12 +316,14 @@ def api_newadmin(key):
         return jsonify(result="failure", details="given username not available")
 
     photo_simplename = "admin_" + username + "_" + secure_filename(admin_photo.filename)
-    photo_filepath = "static/" + "admin_photos/" + photo_simplename
+    photo_filepath = "static/original/admin_photos/" + photo_simplename
 
     mongodb.add_photo("admin", username, photo_filepath, photo_simplename)
     mongodb.add_admin(full_name, username, password, device_id)
     mongodb.claim_device(device_id, username)
+
     admin_photo.save(photo_filepath)
+    Popen(['./DetectImage', PROJECT_DIRECTORY + photo_filepath], cwd=DETECT_IMAGE_DIRECTORY)
 
     return jsonify(result="success")
 
@@ -464,13 +483,21 @@ def api_addphoto(key):
 
     photo = request.files['photo']
     photo_simplename = profile_type + "_" + profile_name + "_" + secure_filename(photo.filename)
-    photo_filepath = "static/" + profile_type + "_photos/" + photo_simplename
+
+    if profile_type == "admin":
+        photo_filepath = "static/original/admin_photos/" + photo_simplename
+    elif profile_type == "user":
+        photo_filepath = "static/original/user_photos/" + photo_simplename
+    elif profile_type == "guest":
+        photo_filepath = "static/original/guest_photos/" + photo_simplename
 
     add_photo = mongodb.add_photo(profile_type, profile_name, photo_filepath, photo_simplename)
     if add_photo is -1:
         return jsonify(result="failure", details="choose photo with unique file name")
 
     photo.save(photo_filepath)
+    Popen(['./DetectImage', PROJECT_DIRECTORY + photo_filepath], cwd=DETECT_IMAGE_DIRECTORY)
+
     return jsonify(result="success", details="photo add successful")
 
 
@@ -507,11 +534,13 @@ def api_adduser(key):
 
     user_photo = request.files['user_photo']
     photo_simplename = "user_" + username + "_" + secure_filename(user_photo.filename)
-    photo_filepath = "static/" + "user_photos/" + photo_simplename
+    photo_filepath = "static/original/user_photos/" + photo_simplename
 
     mongodb.add_photo("user", username, photo_filepath, photo_simplename)
     mongodb.add_user(admin_username, admin_name, full_name, username, password)
+
     user_photo.save(photo_filepath)
+    Popen(['./DetectImage', PROJECT_DIRECTORY + photo_filepath], cwd=DETECT_IMAGE_DIRECTORY)
 
     return jsonify(result="success")
 
@@ -533,11 +562,13 @@ def api_addguest(key):
 
     guest_photo = request.files['guest_photo']
     photo_simplename = "guest_" + full_name + "_" + secure_filename(guest_photo.filename)
-    photo_filepath = "static/" + "guest_photos/" + photo_simplename
+    photo_filepath = "static/original/guest_photos/" + photo_simplename
 
     mongodb.add_photo("guest", full_name, photo_filepath, photo_simplename)
     mongodb.add_guest(admin_username, admin_name, full_name)
+
     guest_photo.save(photo_filepath)
+    Popen(['./DetectImage', PROJECT_DIRECTORY + photo_filepath], cwd=DETECT_IMAGE_DIRECTORY)
 
     return jsonify(result="success")
 
@@ -573,7 +604,6 @@ def api_dashinfo(key):
 
     admin = request.form['admin']
     profile = mongodb.admin_collection.find_one({'username': admin})
-
     device = mongodb.device_collection.find_one({'admin': admin})
 
     door_activity = mongodb.door_collection.find({'admin': admin})
@@ -584,23 +614,69 @@ def api_dashinfo(key):
     return jsonify(result="success", profile=profile, device=device, door=door_list)
 
 
-# --------------------------------------------------------------------------------------------
-#                                     Door Unit API
-# --------------------------------------------------------------------------------------------
+@app.route('/api/<key>/door/status/mobile', methods=['GET', 'POST'])
+def api_getdoorstatusmobile(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
 
-@app.route('/api/<key>/toggledoorstatus', methods=['GET', 'POST'])
-def api_toggledoorstatus(key):
+    device_id = request.form['device_id']
+    device = mongodb.device_collection.find_one({'device_id': device_id})
+
+    if device is None:
+        return "Device does not exist"
+
+    device_status = device.get("status")
+
+    return str(device_status)
+
+
+@app.route('/api/<key>/door/toggle/mobile', methods=['GET', 'POST'])
+def api_toggledoormobile(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
+
+    device_id = request.form['device_id']
+    toggle_photo = request.files['photo']
+    admin_username = request.form['admin_username']
+    profile_type = request.form['profile_type']
+    profile_name = request.form['profile_name']
+
+    create_csv()
+
+    if mongodb.door_collection.count() >= 50:
+        mongodb.delete_door_collections(os)
+
+    photo_simplename = "toggle_testing_device_" + device_id + "_photo_" + mongodb.door_collection.count()
+    photo_filepath = "static/original/toggle_photos/" + photo_simplename
+    toggle_photo.save(photo_filepath)
+
+    out = check_output(['./MatchImage', CSV_PATH, PROJECT_DIRECTORY + photo_filepath],
+                       cwd=MATCH_IMAGE_DIRECTORY)
+
+    # create door activity record and save
+    mongodb.add_door_activity(admin_username, profile_type, profile_name, photo_simplename, out)
+    mongodb.update_device_status(device_id, str(out))
+
+    return jsonify(result="success", access=out)      # 1 means access granted, 0 means access denied
+
+
+# -------------------------------------------------------------------------------------------- #
+#                                     Door Unit API                                            #
+# -------------------------------------------------------------------------------------------- #
+
+@app.route('/api/<key>/door/status/toggle', methods=['GET', 'POST'])
+def api_updatedoorstatus(key):
     if key != API_KEY:
         return api_log_wrong_key()
 
     device_id = request.form['device_id']
     status = request.form['status']
 
-    mongodb.update_device_status(device_id, status)
+    mongodb.update_device_status(device_id, str(status))
     return jsonify(result="success")
 
 
-@app.route('/api/<key>/updatedoorbattery', methods=['GET', 'POST'])
+@app.route('/api/<key>/door/battery/update', methods=['GET', 'POST'])
 def api_updatedoorbattery(key):
     if key != API_KEY:
         return api_log_wrong_key()
@@ -612,8 +688,8 @@ def api_updatedoorbattery(key):
     return jsonify(result="success")
 
 
-@app.route('/api/<key>/dooractivity', methods=['GET', 'POST'])
-def api_dooractivity(key):
+@app.route('/api/<key>/door/activities', methods=['GET', 'POST'])
+def api_getdooractivities(key):
     if key != API_KEY:
         return api_log_wrong_key()
 
@@ -630,46 +706,52 @@ def api_dooractivity(key):
     return jsonify(result="success", door_activities=door_activity_list)
 
 
-@app.route('/api/<key>/toggledoor', methods=['GET', 'POST'])
+@app.route('/api/<key>/door/status', methods=['GET', 'POST'])
+def api_getdoorstatus(key):
+    if key != API_KEY:
+        return api_log_wrong_key()
+
+    device_id = request.form['device_id']
+    device = mongodb.device_collection.find_one({'device_id': device_id})
+
+    if device is None:
+        return "Device does not exist"
+
+    device_status = device.get("status")
+    mongodb.update_device_status(device_id, "0")
+
+    return device_status
+
+
+@app.route('/api/<key>/door/toggle', methods=['GET', 'POST'])
 def api_toggledoor(key):
     if key != API_KEY:
         return api_log_wrong_key()
 
-    # gather request information
-    admin = request.form['admin']
-    profile_type = request.form['profile_type']
-    profile_name = request.form['profile_name']
     device_id = request.form['device_id']
-    toggle_photo = request.files['toggle_photo']
+    toggle_photo = request.files['photo']
 
-    # save toggle photo
-    photo_simplename = "toggle_" + profile_type + "_" + profile_name + "_" + secure_filename(toggle_photo.filename)
-    photo_filepath = "static/" + "toggle_photos/" + photo_simplename
+    admin = mongodb.admin_collection.find_one({'device_id': device_id})
+    if admin is None:
+        return "Device does not exist or is not initialized"
+
+    create_csv()
+
+    if mongodb.door_collection.count() >= 50:
+        mongodb.delete_door_collections(os)
+
+    photo_simplename = "toggle_testing_device_" + device_id + "_photo_" + mongodb.door_collection.count()
+    photo_filepath = "static/original/toggle_photos/" + photo_simplename
     toggle_photo.save(photo_filepath)
 
-    # add toggle activity
-    mongodb.add_toggle_activity(profile_type, profile_name, photo_simplename, photo_filepath)
+    out = check_output(['./MatchImage', CSV_PATH, PROJECT_DIRECTORY + photo_filepath],
+                       cwd=MATCH_IMAGE_DIRECTORY)
 
-    # do facial recognition
-    access = facialrecognition()
+    # create door activity record and save
+    mongodb.add_door_activity(admin.get("username"), "admin", "Door", photo_simplename, out)
 
-    # delete toggle activity (depending on our system design)
-    mongodb.delete_toggle_activity(photo_simplename)
+    return str(out)      # 1 means access, 0 means no access
 
-    # - create door activity record and save
-    mongodb.add_door_activity(admin, profile_type, profile_name, photo_simplename, access)
-
-    # - change device status
-    status = "locked"
-    if access:
-        status = "unlocked"
-    mongodb.update_device_status(device_id, status)
-
-    return jsonify(result="success")
-
-
-def facialrecognition():
-    return True
 
 if __name__ == '__main__':
     app.run(debug=True)
